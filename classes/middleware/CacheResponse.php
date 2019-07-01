@@ -1,5 +1,6 @@
 <?php namespace BizMark\Quicksilver\Classes\Middleware;
 
+use Config;
 use Closure;
 use Exception;
 
@@ -55,6 +56,6 @@ class CacheResponse
      */
     protected function shouldCache(Request $request, Response $response)
     {
-        return $request->isMethod('GET') && $response->getStatusCode() == 200;
+        return $request->isMethod('GET') && $response->getStatusCode() == 200 && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
 }

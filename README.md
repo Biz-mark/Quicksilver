@@ -5,6 +5,10 @@ This is adaptation of package: [JosephSilber/page-cache](https://github.com/Jose
 Lighnintg fast cache system that converts your website page to static html files.
 Super useful for anyone who wants their static website to be more fast.
 
+### Note
+
+This plugin caches every route that opens by GET parameter with 200 response code. Except for every url that has your `'backendUri'` that defined in `config/cms.php`.
+
 ## Installation
 
 Open Settings in your control panel of your OctoberCMS website. Go to Updates & Plugins and in search bar type "Quicksilver". Install it by clicking on icon.
