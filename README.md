@@ -13,7 +13,7 @@ Open Settings in your control panel of your OctoberCMS website. Go to Updates & 
 
 No configuration needed! :)
 
-**Just be sure that plugin can create and write/read folder "page-cache" in your storage path.**
+**Just be sure that plugin can create/write/read "page-cache" folder in your storage path.**
 
 ### Ignoring the cached files
 
