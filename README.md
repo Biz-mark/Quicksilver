@@ -20,7 +20,7 @@ No configuration needed! :)
 To make sure you don't commit your locally cached files to your git repository, add this line to your `.gitignore` file:
 
 ```
-/public/page-cache
+/storage/page-cache
 ```
 
 
