@@ -44,6 +44,6 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
-        $this->app[Kernel::class]->pushMiddleware(CacheResponse::class);
+        $this->app[Kernel::class]->prependMiddleware(CacheResponse::class);
     }
 }

@@ -1,5 +1,6 @@
 <?php namespace BizMark\Quicksilver\Classes;
 
+use Config;
 use Exception;
 
 use Illuminate\Filesystem\Filesystem;
@@ -139,7 +140,7 @@ class Cache
      */
     public function shouldCache(Request $request, Response $response)
     {
-        return $request->isMethod('GET') && $response->getStatusCode() == 200;
+        return $request->isMethod('GET') && $response->getStatusCode() == 200 && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
 
     /**
@@ -220,6 +221,6 @@ class Cache
      */
     protected function getDefaultCachePath()
     {
-        return storage_path('/page-cache');
+        return storage_path('page-cache');
     }
 }
