@@ -5,9 +5,13 @@ This is adaptation of package: [JosephSilber/page-cache](https://github.com/Jose
 Lighnintg fast cache system that converts your website page to static html files.
 Super useful for anyone who wants their static website to be more fast.
 
-### Note
+**Work in progress.**
 
-This plugin caches every route that opens by GET parameter with 200 response code. Except for every url that has your `'backendUri'` that defined in `config/cms.php`.
+### Notes
+
+THIS CACHE SYSTEM ONLY SUITABLE FOR BASIC WEBSITES. BECAUSE OF STATIC FILES, YOU MAY SEE CHANGES ON WEBSITE ONLY AFTER CLEARING CACHE.
+
+This plugin caches every route that opens by GET parameter with 200 response code. Except for every url that is matching your `'backendUri'` defined in `config/cms.php`.
 
 ## Installation
 
@@ -15,9 +19,25 @@ Open Settings in your control panel of your OctoberCMS website. Go to Updates & 
 
 ## Configuration
 
-No configuration needed! :)
+1. Open `.htaccess` and add the following before `Standard routes` section
 
-**Just be sure that plugin can create/write/read "page-cache" folder in your storage path.**
+    ```apacheconfig
+    ##
+    ## Serve Cached Page If Available
+    ##
+    RewriteCond %{REQUEST_URI} ^/?$
+    RewriteCond %{DOCUMENT_ROOT}/storage/page-cache/pc__index__pc.html -f
+    RewriteRule .? /storage/page-cache/pc__index__pc.html [L]
+    RewriteCond %{DOCUMENT_ROOT}/storage/page-cache%{REQUEST_URI}.html -f
+    RewriteRule . /storage/page-cache%{REQUEST_URI}.html [L]
+    ```
+
+2. Comment out following line in `White listed folders` section.
+    ```
+    RewriteRule !^index.php index.php [L,NC]
+    ``` 
+
+3. **Be sure that plugin can create/write/read "page-cache" folder in your storage path.**
 
 ### Ignoring the cached files
 
@@ -26,7 +46,6 @@ To make sure you don't commit your locally cached files to your git repository, 
 ```
 /storage/page-cache
 ```
-
 
 ## Clearing the cache
 

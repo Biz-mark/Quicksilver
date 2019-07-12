@@ -6,8 +6,8 @@ use Exception;
 
 use BizMark\Quicksilver\Classes\Cache;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CacheResponse
 {
@@ -40,7 +40,7 @@ class CacheResponse
     {
         $response = $next($request);
 
-        if ($this->shouldCache($request, $response)) {
+        if ($this->shouldCache($request, $response) && !$this->cache->hasCache($request)) {
             $this->cache->cache($request, $response);
         }
 

@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Container\Container;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class Cache
 {
@@ -141,6 +141,20 @@ class Cache
     public function shouldCache(Request $request, Response $response)
     {
         return $request->isMethod('GET') && $response->getStatusCode() == 200 && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
+    }
+
+    /**
+     * Check if file already cached
+     * @param Request $request
+     * @return bool
+     * @throws Exception
+     */
+    public function hasCache(Request $request)
+    {
+        if ($this->files->exists($this->getCachePath($request->getRequestUri().'.html'))) {
+            return true;
+        }
+        return false;
     }
 
     /**
