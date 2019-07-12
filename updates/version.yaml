@@ -1,3 +1,4 @@
 1.0.0: First version of Quicksilver
 1.0.1: Removed routes.php file
 1.1.0: !!! Updated configuration section in README. To actually use power of this plugin please configure it.
+1.1.1: Note about AJAX on cached pages in README
