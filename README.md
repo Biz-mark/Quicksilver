@@ -11,8 +11,7 @@ Super useful for anyone who wants their static website to be faster.
 
 THIS CACHE SYSTEM ONLY SUITABLE FOR BASIC WEBSITES. BECAUSE OF STATIC FILES, YOU MAY SEE CHANGES ON WEBSITE ONLY AFTER CLEARING CACHE.
 
-**OCTOBERCMS AJAX FRAMEWORK HAS BROKEN BEHAVIOR ON CACHED PAGES.**
-**Work in progress.**
+**Work still in progress.**
 
 This plugin caches every route that opens by GET parameter with 200 response code. Except for every url that is matching your `'backendUri'` defined in `config/cms.php`.
 
@@ -33,6 +32,8 @@ Open Settings in the control panel of your OctoberCMS website. Go to Updates & P
     RewriteRule .? /storage/page-cache/pc__index__pc.html [L]
     RewriteCond %{DOCUMENT_ROOT}/storage/page-cache%{REQUEST_URI}.html -f
     RewriteRule . /storage/page-cache%{REQUEST_URI}.html [L]
+    RewriteCond %{HTTP:X-Requested-With} XMLHttpRequest
+    RewriteRule !^index.php index.php [L,NC]
     ```
 
 2. Comment out following line in `White listed folders` section.
