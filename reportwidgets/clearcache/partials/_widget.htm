@@ -1,0 +1,11 @@
+<div class="report-widget">
+    <h3><?= e(trans('bizmark.quicksilver::lang.reportwidgets.clearcache.name')) ?></h3>
+
+    <button 
+        type="button" 
+        class="btn btn-success" 
+        data-request="<?= $this->getEventHandler('onClearCache') ?>">
+        <?= e(trans('bizmark.quicksilver::lang.reportwidgets.clearcache.button')) ?>
+        <span class="fa icon-trash"></span>
+    </button>
+</div>
