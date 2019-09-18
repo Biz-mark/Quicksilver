@@ -46,4 +46,19 @@ class Plugin extends PluginBase
     {
         $this->app[Kernel::class]->prependMiddleware(CacheResponse::class);
     }
+    
+    /**
+     * Returns the extra report widgets.
+     * 
+     * @return  array
+     */
+    public function registerReportWidgets()
+    {
+        return [
+            'BizMark\Quicksilver\ReportWidgets\ClearCache' => [
+                'label'   => 'bizmark.quicksilver::lang.reportwidget.clearcache.name',
+                'context' => 'dashboard'
+            ],
+        ];
+    }
 }
