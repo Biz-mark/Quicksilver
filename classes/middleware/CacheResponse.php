@@ -51,10 +51,10 @@ class CacheResponse
      * Determines whether the given request/response pair should be cached.
      *
      * @param Request $request
-     * @param Response $response
+     * @param $response
      * @return bool
      */
-    protected function shouldCache(Request $request, Response $response)
+    protected function shouldCache(Request $request, $response)
     {
         return $request->isMethod('GET') && $response->getStatusCode() == 200 && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
