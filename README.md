@@ -1,5 +1,7 @@
 # OctoberCMS lightning fast static files cache system
 
+[Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/bizmark-quicksilver)
+
 This is adaptation of package: [JosephSilber/page-cache](https://github.com/JosephSilber/page-cache) (Go get him some stars)
 
 Lightning fast cache system that converts your website page to static html files.
