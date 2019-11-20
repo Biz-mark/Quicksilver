@@ -1,0 +1,45 @@
+<?php
+    $pages = $this->getFolderStats(storage_path('page-cache'));
+    $october = $this->getFolderStats(storage_path('cms'));
+?>
+<div data-control="toolbar">
+    <div class="scoreboard-item title-value">
+        <h4><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.title.cachedpages')) ?></h4>
+        <p><?= $pages['total']; ?> <span class="lower"><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.files')) ?></span></p>
+    </div>
+
+    <div class="scoreboard-item title-value">
+        <h4><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.title.pagesweight')) ?></h4>
+        <p><?= $pages['weight']; ?> <span class="lower"><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.mb')) ?></span></p>
+    </div>
+
+    <div class="scoreboard-item title-value">
+        <h4><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.title.cachedoctober')) ?></h4>
+        <p><?= $october['total']; ?> <span class="lower"><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.files')) ?></span></p>
+    </div>
+
+    <div class="scoreboard-item title-value">
+        <h4><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.title.octoberweight')) ?></h4>
+        <p><?= $october['weight']; ?> <span class="lower"><?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.mb')) ?></p>
+    </div>
+
+    <div class="scoreboard-item title-value">
+        <a
+            href="javascript:;"
+            data-request="onClearPageCache"
+            data-load-indicator="<?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.clearing')) ?>"
+            class="btn btn-primary oc-icon-trash-o align-btn">
+            <?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.clear.pages')) ?>
+        </a>
+    </div>
+
+    <div class="scoreboard-item title-value">
+        <a
+            href="javascript:;"
+            data-request="onClearAllCache"
+            data-load-indicator="<?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.clearing')) ?>"
+            class="btn btn-primary oc-icon-trash align-btn">
+            <?= e(trans('bizmark.quicksilver::lang.reportwidget.cachestatus.clear.all')) ?>
+        </a>
+    </div>
+</div>

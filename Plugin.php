@@ -41,9 +41,26 @@ class Plugin extends PluginBase
 
     /**
      * Boot method, called right before the request route.
+     *
+     * @return void
      */
     public function boot()
     {
         $this->app[Kernel::class]->prependMiddleware(CacheResponse::class);
+    }
+
+    /**
+     * Returns the array with report widgets for the dashboard.
+     *
+     * @return array
+     */
+    public function registerReportWidgets()
+    {
+        return [
+            'BizMark\Quicksilver\ReportWidgets\CacheStatus' => [
+                'label'   => 'bizmark.quicksilver::lang.reportwidget.cachestatus.name',
+                'context' => 'dashboard'
+            ],
+        ];
     }
 }

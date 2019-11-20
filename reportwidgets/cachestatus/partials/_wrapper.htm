@@ -1,0 +1,21 @@
+<div class="report-widget" >
+    <h3><?= Lang::get('bizmark.quicksilver::lang.reportwidget.cachestatus.name')?></h3>
+    <div class="scoreboard loading-indicator-container" id="cachestatuswrap">
+        <?= $this->makePartial('widget') ?>
+    </div>
+</div>
+<style>
+    div.scoreboard div.scoreboard-item {
+        vertical-align: unset;
+        margin: 1px 25px 0 0;
+    }
+    div.scoreboard div.scoreboard-item a.align-btn{
+        position: relative;
+        bottom: 13px;
+    }
+    div.scoreboard div.scoreboard-item span.lower {
+        font-size: 19px;
+        font-weight: normal;
+        color: #d3d3d3;
+    }
+</style>

@@ -4,3 +4,4 @@
 1.1.1: Note about AJAX on cached pages in README
 1.1.5: !!! Ajax requests now work properly on cached pages. Place new code in your htaccess like in documentation
 1.1.6: Fixing backend opening error
+1.2.0: !!! New ReportWidget for dashboard that allows quiclky purge pages cache and october cache.
