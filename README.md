@@ -109,4 +109,4 @@ Don't forget to freeze all updates of Quicksilver plugin at settings of your Oct
 ---
 © 2019, [Biz-Mark](https://biz-mark.ru/) under the [MIT license](https://opensource.org/licenses/MIT).
 
-Developed by Joseph Silber, adapted for OctoberCMS by Nick Khaetsky at Biz-Mark.
+Adaptation for OctoberCMS by Nick Khaetsky at Biz-Mark.
