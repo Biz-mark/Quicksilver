@@ -29,6 +29,8 @@ Open Settings in the control panel of your OctoberCMS website. Go to Updates & P
     ##
     ## Serve Cached Page If Available
     ##
+    RewriteCond %{QUERY_STRING} ^(.)
+    RewriteRule !^index.php index.php [L,NC]
     RewriteCond %{REQUEST_URI} ^/?$
     RewriteCond %{DOCUMENT_ROOT}/storage/page-cache/pc__index__pc.html -f
     RewriteRule .? /storage/page-cache/pc__index__pc.html [L]
@@ -79,8 +81,8 @@ Example:
 ```php
 <?php namespace Acme\Plugin\Middleware;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Request;
+use Response;
 
 use BizMark\Quicksilver\Classes\Middleware\CacheResponse as BaseCacheResponse;
 

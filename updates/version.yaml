@@ -7,3 +7,4 @@
 1.2.0: !!! New ReportWidget for dashboard that allows quiclky purge pages cache and october cache.
 1.2.1: Fixing typo in russian localization
 1.2.2: Minor fixes
+1.3.0: !!! Query strings filtering for dynamic pages.

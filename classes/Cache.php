@@ -140,7 +140,10 @@ class Cache
      */
     public function shouldCache(Request $request, $response)
     {
-        return $request->isMethod('GET') && $response->getStatusCode() == 200 && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
+        return $request->isMethod('GET')
+            && $request->getQueryString() == null
+            && $response->getStatusCode() == 200
+            && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
 
     /**

@@ -8,9 +8,8 @@ use BizMark\Quicksilver\Classes\Middleware\CacheResponse;
 /**
  * Quicksilver Plugin Information File
  *
- * LARAVEL PAGE CACHE PACKAGE INTEGRATION FOR OCTOBERCMS.
- * ORIGINAL PACKAGE IS https://github.com/JosephSilber/page-cache
- * ALL CREDITS GOES TO JosephSilber
+ * This code is based on Laravel Page Cache package https://github.com/JosephSilber/page-cache by JosephSilber.
+ * OctoberCMS integration and adaptation by Nick Khaetsky at Biz-Mark.
  */
 class Plugin extends PluginBase
 {
