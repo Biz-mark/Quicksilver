@@ -204,7 +204,7 @@ class Cache
     /**
      * Get the names of the directory and file.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return array
      * @throws Exception
      */

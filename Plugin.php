@@ -24,7 +24,7 @@ class Plugin extends PluginBase
         return [
             'name'        => 'bizmark.quicksilver::lang.plugin.name',
             'description' => 'bizmark.quicksilver::lang.plugin.description',
-            'author'      => 'Joseph Silber, Nick Khaetsky, Biz-Mark',
+            'author'      => 'Nick Khaetsky, Biz-Mark',
             'icon'        => 'icon-bolt'
         ];
     }
