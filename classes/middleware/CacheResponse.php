@@ -60,7 +60,7 @@ class CacheResponse
         return $request->isMethod('GET')
             && $request->getQueryString() == null
             && $response->getStatusCode() == 200
-            && BackendAuth::getUser() == null
+            && BackendAuth::check() == null
             && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
 }
