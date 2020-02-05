@@ -3,6 +3,7 @@
 use Config;
 use Closure;
 use Exception;
+use BackendAuth;
 
 use BizMark\Quicksilver\Classes\Cache;
 
@@ -59,6 +60,7 @@ class CacheResponse
         return $request->isMethod('GET')
             && $request->getQueryString() == null
             && $response->getStatusCode() == 200
+            && BackendAuth::check() == false
             && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
     }
 }
