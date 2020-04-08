@@ -61,6 +61,6 @@ class CacheResponse
             && $request->getQueryString() == null
             && $response->getStatusCode() == 200
             && BackendAuth::check() == false
-            && !strpos($request->getUri(), Config::get('cms::backendUri', 'backend'));
+            && !strpos($request->getUri(), Config::get('cms.backendUri', 'backend'));
     }
 }
