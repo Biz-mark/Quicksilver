@@ -5,6 +5,14 @@ return [
         'name' => 'Quicksilver',
         'description' => 'Супербыстрый кеш для вашего статичного сайта.',
     ],
+    'settings' => [
+        'label' => 'Quicksilver',
+        'description' => 'Настройки плагина, добавление исключений',
+        'tab' => 'Исключения',
+        'fields' => [
+            'url_pattern' => 'Путь/URL (Допускается использование регулярных выражений)',
+        ]
+    ],
     'reportwidget' => [
         'cachestatus' => [
             'name' => 'Статус кэша',

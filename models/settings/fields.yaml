@@ -1,0 +1,16 @@
+tabs:
+    stretch: true
+    cssClass: tabs-no-inset
+
+    fields:
+        exclude:
+            stretch: true
+            tab: bizmark.quicksilver::lang.settings.tab
+            type: repeater
+            titleFrom: url
+            form:
+                fields:
+                    url_pattern:
+                        label: bizmark.quicksilver::lang.settings.fields.url_pattern
+                        required: true
+                        type: text

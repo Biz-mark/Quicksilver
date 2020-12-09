@@ -1,29 +1,36 @@
-<?php namespace BizMark\Quicksilver\Classes;
+<?php declare(strict_types=1);
+namespace BizMark\Quicksilver\Classes;
 
+use BizMark\Quicksilver\Classes\Exceptions\CacheDirectoryPathNotSetException;
 use Config;
 use Exception;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Container\Container;
+use BizMark\Quicksilver\Classes\Contracts\Cache as PageCacheContract;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
+use October\Rain\Support\Str;
 
-class Cache
+/**
+ * Class Cache
+ * @package BizMark\Quicksilver\Classes
+ */
+class Cache implements PageCacheContract
 {
+    /**
+     * Page cache directory name
+     *
+     * @var string
+     */
+    protected const DIRECTORY = 'page-cache';
+
     /**
      * The filesystem instance.
      *
      * @var Filesystem
      */
     protected $files;
-
-    /**
-     * The container instance.
-     *
-     * @var Container|null
-     */
-    protected $container = null;
 
     /**
      * The directory in which to store the cached pages.
@@ -43,45 +50,94 @@ class Cache
     }
 
     /**
-     * Sets the container instance.
-     *
-     * @param Container $container
-     * @return $this
+     * @inheritDoc
      */
-    public function setContainer(Container $container)
+    public function setCachePath(string $path): PageCacheContract
     {
-        $this->container = $container;
+        $this->cachePath = rtrim($path, '\/');
 
         return $this;
     }
 
     /**
-     * Sets the directory in which to store the cached pages.
-     *
-     * @param  string  $path
-     * @return void
+     * @inheritDoc
      */
-    public function setCachePath($path)
+    public function getCachePath(): string
     {
-        $this->cachePath = rtrim($path, '\/');
-    }
-
-    /**
-     * Gets the path to the cache directory.
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    public function getCachePath()
-    {
-        $base = $this->cachePath ? $this->cachePath : $this->getDefaultCachePath();
+        $base = $this->cachePath ?: $this->getDefaultCachePath();
 
         if (is_null($base)) {
-            throw new Exception('Cache path not set.');
+            throw new CacheDirectoryPathNotSetException;
         }
 
         return $this->join(array_merge([$base], func_get_args()));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cacheIfNeeded(Request $request, Response $response): PageCacheContract
+    {
+        if ($this->shouldCache($request, $response)) {
+            $this->cache($request, $response);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function shouldCache(Request $request, Response $response): bool
+    {
+        $isRequestAccess      = $request->isMethod('GET') && $request->getQueryString() === null;
+        $isRequestQueryAccess = $response->getStatusCode() === 200 && $request->getQueryString() === null;
+        $isBackendUri         = !Str::contains($request->getUri(), Config::get('cms::backendUri', 'backend'));
+
+        return $isRequestAccess && $isRequestQueryAccess && $isBackendUri;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasCache(Request $request): bool
+    {
+        $cachePath = $this->getCachePath($request->getRequestUri() . '.html');
+        return $this->files->exists($cachePath);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cache(Request $request, Response $response): PageCacheContract
+    {
+        [$path, $file] = $this->getDirectoryAndFileNames($request);
+
+        $this->files->makeDirectory($path, 0775, true, true);
+
+        $this->files->put(
+            $this->join([$path, $file]),
+            $response->getContent(),
+            true
+        );
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function forget(?string $slug): bool
+    {
+        return $this->files->delete($this->getCachePath($slug.'.html'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function clear(): bool
+    {
+        return $this->files->cleanDirectory($this->getCachePath());
     }
 
     /**
@@ -92,7 +148,7 @@ class Cache
      */
     protected function join(array $paths)
     {
-        $trimmed = array_map(function ($path) {
+        $trimmed = array_map(static function (string $path): string {
             return trim($path, '/');
         }, $paths);
 
@@ -108,100 +164,9 @@ class Cache
      * @param  string  $target
      * @return string
      */
-    protected function matchRelativity($source, $target)
+    protected function matchRelativity(string $source, string $target): string
     {
-        return $source[0] == '/' ? '/'.$target : $target;
-    }
-
-    /**
-     * Caches the given response if we determine that it should be cache.
-     *
-     * @param Request $request
-     * @param Response $response
-     * @return $this
-     * @throws Exception
-     */
-    public function cacheIfNeeded(Request $request, Response $response)
-    {
-        if ($this->shouldCache($request, $response)) {
-            $this->cache($request, $response);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Determines whether the given request/response pair should be cached.
-     *
-     * @param Request $request
-     * @param $response
-     * @return bool
-     * @throws Exception
-     */
-    public function shouldCache(Request $request, $response)
-    {
-        return $request->isMethod('GET')
-            && $request->getQueryString() == null
-            && $response->getStatusCode() == 200
-            && !strpos($request->getUri(), Config::get('cms.backendUri', 'backend'));
-    }
-
-    /**
-     * Check if file already cached
-     * @param Request $request
-     * @return bool
-     * @throws Exception
-     */
-    public function hasCache(Request $request)
-    {
-        if ($this->files->exists($this->getCachePath($request->getRequestUri().'.html'))) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Cache the response to a file.
-     *
-     * @param Request $request
-     * @param Response $response
-     * @return void
-     * @throws Exception
-     */
-    public function cache(Request $request, Response $response)
-    {
-        list($path, $file) = $this->getDirectoryAndFileNames($request);
-
-        $this->files->makeDirectory($path, 0775, true, true);
-
-        $this->files->put(
-            $this->join([$path, $file]),
-            $response->getContent(),
-            true
-        );
-    }
-
-    /**
-     * Remove the cached file for the given slug.
-     *
-     * @param string $slug
-     * @return bool
-     * @throws Exception
-     */
-    public function forget($slug)
-    {
-        return $this->files->delete($this->getCachePath($slug.'.html'));
-    }
-
-    /**
-     * Fully clear the cache directory.
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function clear()
-    {
-        return $this->files->deleteDirectory($this->getCachePath(), true);
+        return $source[0] === '/' ? '/' . $target : $target;
     }
 
     /**
@@ -211,22 +176,25 @@ class Cache
      * @return array
      * @throws Exception
      */
-    protected function getDirectoryAndFileNames($request)
+    protected function getDirectoryAndFileNames(Request $request): array
     {
-        $segments = explode('/', ltrim($request->getPathInfo(), '/'));
+        $requestPath = ltrim($request->getPathInfo(), '/');
+        $segments = explode('/', $requestPath);
 
         $file = $this->aliasFilename(array_pop($segments)).'.html';
-
-        return [$this->getCachePath(implode('/', $segments)), $file];
+        return [
+            $this->getCachePath($requestPath),
+            $file
+        ];
     }
 
     /**
      * Alias the filename if necessary.
      *
-     * @param  string  $filename
+     * @param  string|null  $filename
      * @return string
      */
-    protected function aliasFilename($filename)
+    protected function aliasFilename(?string $filename): string
     {
         return $filename ?: 'pc__index__pc';
     }
@@ -236,8 +204,8 @@ class Cache
      *
      * @return string|null
      */
-    protected function getDefaultCachePath()
+    protected function getDefaultCachePath(): ?string
     {
-        return storage_path('page-cache');
+        return storage_path(static::DIRECTORY);
     }
 }

@@ -1,9 +1,20 @@
-<?php namespace BizMark\Quicksilver;
+<?php declare(strict_types=1);
 
-use Backend;
+namespace BizMark\Quicksilver;
+
+use BizMark\Quicksilver\Models\Settings;
+use Event;
+use BizMark\Quicksilver\Classes\Console\ClearCache;
+use BizMark\Quicksilver\ReportWidgets\CacheStatus;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Lang;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
+use BizMark\Quicksilver\Classes\Contracts\Cache as PageCacheContract;
+use BizMark\Quicksilver\Classes\Cache;
 use BizMark\Quicksilver\Classes\Middleware\CacheResponse;
+use System\Classes\SettingsManager;
 
 /**
  * Quicksilver Plugin Information File
@@ -18,7 +29,7 @@ class Plugin extends PluginBase
      *
      * @return array
      */
-    public function pluginDetails()
+    public function pluginDetails(): array
     {
         return [
             'name'        => 'bizmark.quicksilver::lang.plugin.name',
@@ -33,9 +44,11 @@ class Plugin extends PluginBase
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->registerConsoleCommand('page-cache:clear', 'BizMark\Quicksilver\Classes\Console\ClearCache');
+        $this->app->bind(PageCacheContract::class, Cache::class);
+
+        $this->registerConsoleCommand('page-cache:clear', ClearCache::class);
     }
 
     /**
@@ -43,9 +56,13 @@ class Plugin extends PluginBase
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->app[Kernel::class]->prependMiddleware(CacheResponse::class);
+
+        Event::listen('cache:cleared', static function (): void {
+            Artisan::call('page-cache:clear');
+        });
     }
 
     /**
@@ -53,13 +70,28 @@ class Plugin extends PluginBase
      *
      * @return array
      */
-    public function registerReportWidgets()
+    public function registerReportWidgets(): array
     {
         return [
-            'BizMark\Quicksilver\ReportWidgets\CacheStatus' => [
+            CacheStatus::class => [
                 'label'   => 'bizmark.quicksilver::lang.reportwidget.cachestatus.name',
                 'context' => 'dashboard'
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function registerSettings(): array
+    {
+        return [
+            'options' => [
+                'label'       => 'bizmark.quicksilver::lang.settings.label',
+                'description' => 'bizmark.quicksilver::lang.settings.description',
+                'class'       => Settings::class,
+                'category'    => SettingsManager::CATEGORY_CMS
+            ]
         ];
     }
 }

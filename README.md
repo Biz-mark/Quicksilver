@@ -29,6 +29,8 @@ Open Settings in the control panel of your OctoberCMS website. Go to Updates & P
     ##
     ## Serve Cached Page If Available
     ##
+    RewriteCond %{QUERY_STRING} ^(.)
+    RewriteRule !^index.php index.php [L,NC]
     RewriteCond %{REQUEST_URI} ^/?$
     RewriteCond %{DOCUMENT_ROOT}/storage/page-cache/pc__index__pc.html -f
     RewriteRule .? /storage/page-cache/pc__index__pc.html [L]
@@ -60,6 +62,10 @@ Since the responses are cached to disk as static files, any updates to those pag
 ```
 php artisan page-cache:clear
 ```
+
+As a rule of thumb, it's good practice to add this to your deployment script. That way, whenever you push an update to your site the page cache will automatically be cleared.
+
+If you're using [Forge](https://forge.laravel.com)'s Quick Deploy feature, you should add this line to the end of your Deploy Script. This'll ensure that the cache is cleared whenever you push an update to your site.
 
 You may optionally pass a URL slug to the command, to only delete the cache for a specific page:
 
