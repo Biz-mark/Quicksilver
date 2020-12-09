@@ -1,10 +1,8 @@
 <?php namespace BizMark\Quicksilver\Classes\Console;
 
 use Exception;
-
 use Illuminate\Console\Command;
-
-use BizMark\Quicksilver\Classes\Cache;
+use BizMark\Quicksilver\Classes\Contracts\Cache;
 
 class ClearCache extends Command
 {
@@ -28,32 +26,26 @@ class ClearCache extends Command
      * @return void
      * @throws Exception
      */
-    public function handle()
+    public function handle(Cache $cache): void
     {
-        $cache = $this->laravel->make(Cache::class);
         $slug = $this->argument('slug');
-
-        if ($slug) {
-            $this->forget($cache, $slug);
-        } else {
-            $this->clear($cache);
-        }
+        $this->{$slug ? 'forget' : 'clear'}($cache, $slug);
     }
 
     /**
      * Remove the cached file for the given slug.
      *
      * @param Cache $cache
-     * @param string $slug
+     * @param string|null $slug
      * @return void
      * @throws Exception
      */
-    public function forget(Cache $cache, $slug)
+    protected function forget(Cache $cache, ?string $slug): void
     {
         if ($cache->forget($slug)) {
-            $this->info("Page cache cleared for \"{$slug}\"");
+            $this->info('Page cache cleared for "'. $slug .'"');
         } else {
-            $this->info("No page cache found for \"{$slug}\"");
+            $this->info('No page cache found for "' .$slug .'"');
         }
     }
 
@@ -64,12 +56,12 @@ class ClearCache extends Command
      * @return void
      * @throws Exception
      */
-    public function clear(Cache $cache)
+    protected function clear(Cache $cache): void
     {
         if ($cache->clear()) {
-            $this->info('Page cache cleared at '.$cache->getCachePath());
+            $this->info('Page cache cleared at '. $cache->getCachePath());
         } else {
-            $this->warn('Page cache not cleared at '.$cache->getCachePath());
+            $this->warn('Page cache not cleared at '. $cache->getCachePath());
         }
     }
 }

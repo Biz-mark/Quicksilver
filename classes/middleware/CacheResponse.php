@@ -1,14 +1,12 @@
 <?php namespace BizMark\Quicksilver\Classes\Middleware;
 
-use Config;
+use Backend\Facades\BackendAuth;
+use BizMark\Quicksilver\Models\Settings;
 use Closure;
 use Exception;
-use BackendAuth;
-
-use BizMark\Quicksilver\Classes\Cache;
-
+use BizMark\Quicksilver\Classes\Contracts\Cache;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class CacheResponse
 {
@@ -21,8 +19,7 @@ class CacheResponse
 
     /**
      * Constructor.
-     *
-     * @var Cache $cache
+     * @param Cache $cache
      */
     public function __construct(Cache $cache)
     {
@@ -41,7 +38,7 @@ class CacheResponse
     {
         $response = $next($request);
 
-        if ($this->shouldCache($request, $response) && !$this->cache->hasCache($request)) {
+        if ($this->shouldCache($request, $response)) {
             $this->cache->cache($request, $response);
         }
 
@@ -52,15 +49,19 @@ class CacheResponse
      * Determines whether the given request/response pair should be cached.
      *
      * @param Request $request
-     * @param $response
+     * @param Response $response
      * @return bool
      */
-    protected function shouldCache(Request $request, $response)
+    protected function shouldCache(Request $request, Response $response): bool
     {
-        return $request->isMethod('GET')
-            && $request->getQueryString() == null
-            && $response->getStatusCode() == 200
-            && BackendAuth::check() == false
-            && !strpos($request->getUri(), Config::get('cms.backendUri', 'backend'));
+        return !$this->isExclude($request)
+            && $this->cache->shouldCache($request, $response)
+            && !BackendAuth::check()
+            && !$this->cache->hasCache($request);
+    }
+
+    protected function isExclude(Request $request): bool
+    {
+        return $request->is(Settings::instance()->getExcludeListPatterns());
     }
 }

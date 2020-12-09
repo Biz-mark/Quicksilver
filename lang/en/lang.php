@@ -5,6 +5,14 @@ return [
         'name' => 'Quicksilver',
         'description' => 'Lightning fast cache for your static website',
     ],
+    'settings' => [
+        'label' => 'Quicksilver',
+        'description' => 'Plugin settings, adding exceptions',
+        'tab' => 'Exceptions',
+        'fields' => [
+            'url_pattern' => 'Route pattern',
+        ]
+    ],
     'reportwidget' => [
         'cachestatus' => [
             'name' => 'Cache status',

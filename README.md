@@ -61,6 +61,10 @@ Since the responses are cached to disk as static files, any updates to those pag
 php artisan page-cache:clear
 ```
 
+As a rule of thumb, it's good practice to add this to your deployment script. That way, whenever you push an update to your site the page cache will automatically be cleared.
+
+If you're using [Forge](https://forge.laravel.com)'s Quick Deploy feature, you should add this line to the end of your Deploy Script. This'll ensure that the cache is cleared whenever you push an update to your site.
+
 You may optionally pass a URL slug to the command, to only delete the cache for a specific page:
 
 ```
