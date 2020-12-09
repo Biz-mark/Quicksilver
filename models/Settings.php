@@ -39,6 +39,6 @@ class Settings extends Model
     {
         return \array_map(static function(array $row): string {
             return $row['url_pattern'];
-        }, Settings::instance()->get('exclude'));
+        }, (array) Settings::instance()->get('exclude', []));
     }
 }
