@@ -1,7 +1,4 @@
 tabs:
-    stretch: true
-    cssClass: tabs-no-inset
-
     fields:
         exclude:
             stretch: true

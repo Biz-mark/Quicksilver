@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace BizMark\Quicksilver\Classes\Contracts;
+<?php namespace BizMark\Quicksilver\Classes\Contracts;
 
 use BizMark\Quicksilver\Classes\Exceptions\CacheDirectoryPathNotSetException;
 use Exception;

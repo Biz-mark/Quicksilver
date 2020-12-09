@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace BizMark\Quicksilver\Classes\Middleware;
+<?php namespace BizMark\Quicksilver\Classes\Middleware;
 
 use Backend\Facades\BackendAuth;
 use BizMark\Quicksilver\Models\Settings;

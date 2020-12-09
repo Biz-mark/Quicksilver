@@ -1,5 +1,4 @@
-<?php declare(strict_types=1);
-namespace BizMark\Quicksilver\Classes\Console;
+<?php namespace BizMark\Quicksilver\Classes\Console;
 
 use Exception;
 use Illuminate\Console\Command;

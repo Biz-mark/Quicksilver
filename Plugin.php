@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace BizMark\Quicksilver;
+<?php namespace BizMark\Quicksilver;
 
 use BizMark\Quicksilver\Models\Settings;
 use Event;

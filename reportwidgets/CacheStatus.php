@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace BizMark\Quicksilver\ReportWidgets;
+<?php namespace BizMark\Quicksilver\ReportWidgets;
 
 use BizMark\Quicksilver\Classes\Contracts\Cache;
 use Lang;

@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-
-namespace BizMark\Quicksilver\Classes\Exceptions;
+<?php namespace BizMark\Quicksilver\Classes\Exceptions;
 
 
 /**

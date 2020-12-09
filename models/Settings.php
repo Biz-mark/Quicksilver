@@ -1,5 +1,4 @@
-<?php declare(strict_types=1);
-namespace BizMark\Quicksilver\Models;
+<?php namespace BizMark\Quicksilver\Models;
 
 use Illuminate\Support\Facades\Cache;
 use October\Rain\Database\Model;
