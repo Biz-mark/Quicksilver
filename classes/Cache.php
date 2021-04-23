@@ -128,7 +128,7 @@ class Cache implements PageCacheContract
      */
     public function forget(?string $slug): bool
     {
-        return $this->files->delete($this->getCachePath($slug.'.html'));
+        return $this->files->delete($this->getCachePath($this->aliasFilename($slug).'.html'));
     }
 
     /**
@@ -196,7 +196,7 @@ class Cache implements PageCacheContract
      */
     protected function aliasFilename(?string $filename): string
     {
-        return $filename ?: 'pc__index__pc';
+        return in_array($filename,['','/']) ? 'pc__index__pc' : $filename;
     }
 
     /**
