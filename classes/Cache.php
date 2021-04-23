@@ -178,7 +178,8 @@ class Cache implements PageCacheContract
     protected function getDirectoryAndFileNames(Request $request): array
     {
         $requestPath = ltrim($request->getPathInfo(), '/');
-        $segments = explode('/', $requestPath);
+
+        $segments = $requestPath === "" ? [''] : array_filter(explode('/', $requestPath));
 
         $file = $this->aliasFilename(array_pop($segments)).'.html';
         return [
