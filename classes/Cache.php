@@ -183,7 +183,7 @@ class Cache implements PageCacheContract
 
         $file = $this->aliasFilename(array_pop($segments)).'.html';
         return [
-            $this->getCachePath($requestPath),
+            $this->getCachePath(implode('/',$segments)),
             $file
         ];
     }
