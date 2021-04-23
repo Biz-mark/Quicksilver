@@ -22,6 +22,7 @@ This plugin caches every route that opens by GET parameter with 200 response cod
 Open Settings in the control panel of your OctoberCMS website. Go to Updates & Plugins and in search bar type "Quicksilver". Install it by clicking on the icon.
 
 ## Configuration
+### Apache
 
 1. Open `.htaccess` and add the following before `Standard routes` section
 
@@ -41,9 +42,34 @@ Open Settings in the control panel of your OctoberCMS website. Go to Updates & P
 2. Comment out following line in `White listed folders` section.
     ```
     RewriteRule !^index.php index.php [L,NC]
-    ``` 
+    ```
 
 3. **Be sure that plugin can create/write/read "page-cache" folder in your storage path.**
+
+### Nginx
+
+```nginx
+location = / {
+    try_files /storage/page-cache/pc__index__pc.html /index.php?$query_string;
+}
+
+location / {
+    try_files $uri $uri/ /storage/page-cache/$uri.html /storage/page-cache/$uri.json /index.php?$query_string;
+}
+```
+
+If you need to send ajax requests to cached url, you should use this construction
+
+```nginx
+location / {
+    if ($request_method = POST ) {
+        rewrite ^/.*$ /index.php last;
+    }
+
+    try_files $uri $uri/ /storage/page-cache/$uri.html /storage/page-cache/$uri.json /index.php?$query_string;
+}
+```
+
 
 ### Ignoring the cached files
 
