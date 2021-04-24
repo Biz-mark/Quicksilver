@@ -134,9 +134,9 @@ class Cache implements PageCacheContract
     /**
      * @inheritDoc
      */
-    public function clear(): bool
+    public function clear(?string $path = null): bool
     {
-        return $this->files->cleanDirectory($this->getCachePath());
+        return $this->files->cleanDirectory($this->getCachePath($path));
     }
 
     /**
@@ -147,7 +147,7 @@ class Cache implements PageCacheContract
      */
     protected function join(array $paths)
     {
-        $trimmed = array_map(static function (string $path): string {
+        $trimmed = array_map(static function (?string $path): string {
             return trim($path, '/');
         }, $paths);
 

@@ -11,7 +11,7 @@ class ClearCache extends Command
      *
      * @var string
      */
-    protected $signature = 'page-cache:clear {slug? : URL slug of page to delete}';
+    protected $signature = 'page-cache:clear {slug? : URL slug of page to delete} {--recursive}';
 
     /**
      * The console command description.
@@ -29,7 +29,15 @@ class ClearCache extends Command
     public function handle(Cache $cache): void
     {
         $slug = $this->argument('slug');
-        $this->{$slug ? 'forget' : 'clear'}($cache, $slug);
+        $recursive = $this->option('recursive');
+
+        if (!$slug) {
+            $this->clear($cache);
+        } else if ($recursive) {
+            $this->clear($cache, $slug);
+        } else {
+            $this->forget($cache, $slug);
+        }
     }
 
     /**
@@ -53,15 +61,16 @@ class ClearCache extends Command
      * Clear the full page cache.
      *
      * @param Cache $cache
+     * @param string|null $path
      * @return void
-     * @throws Exception
+     * @throws \BizMark\Quicksilver\Classes\Exceptions\CacheDirectoryPathNotSetException
      */
-    protected function clear(Cache $cache): void
+    protected function clear(Cache $cache, ?string $path = null): void
     {
-        if ($cache->clear()) {
-            $this->info('Page cache cleared at '. $cache->getCachePath());
+        if ($cache->clear($path)) {
+            $this->info('Page cache cleared at '. $cache->getCachePath($path));
         } else {
-            $this->warn('Page cache not cleared at '. $cache->getCachePath());
+            $this->warn('Page cache not cleared at '. $cache->getCachePath($path));
         }
     }
 }

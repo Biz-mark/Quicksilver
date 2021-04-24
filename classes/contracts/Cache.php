@@ -22,6 +22,7 @@ interface Cache
     /**
      * Gets the path to the cache directory.
      *
+     * @param string|null ...$paths
      * @return string
      * @throws CacheDirectoryPathNotSetException
      */
@@ -77,10 +78,11 @@ interface Cache
     /**
      * Fully clear the cache directory.
      *
+     * @param  string|null
      * @return bool
      * @throws Exception
      */
-    public function clear(): bool;
+    public function clear(?string $path): bool;
 
 
 }
