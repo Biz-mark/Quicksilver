@@ -1,11 +1,12 @@
 <?php namespace BizMark\Quicksilver;
 
+use BizMark\Quicksilver\Classes\CacheCleaner;
 use BizMark\Quicksilver\Models\Settings;
+use Cms\Classes\Page;
 use Event;
 use BizMark\Quicksilver\Classes\Console\ClearCache;
 use BizMark\Quicksilver\ReportWidgets\CacheStatus;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Lang;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
@@ -56,11 +57,54 @@ class Plugin extends PluginBase
      */
     public function boot(): void
     {
+
         $this->app[Kernel::class]->prependMiddleware(CacheResponse::class);
 
         Event::listen('cache:cleared', static function (): void {
-            Artisan::call('page-cache:clear');
+            CacheCleaner::clear();
         });
+
+        /* Auto clearing */
+        $settings = Settings::instance();
+        if ((int) $settings->auto_clearing === 1) {
+            Page::extend(function ($model) {
+                $model->bindEvent('model.afterSave', function () use ($model) {
+                    CacheCleaner::clearUrl($model->url);
+                });
+            });
+
+            /* Rainlab Static Pages */
+            if (class_exists('\RainLab\Pages\Plugin')) {
+                \RainLab\Pages\Classes\Page::extend(function ($model) {
+                    $model->bindEvent('model.afterSave', function () use ($model) {
+                        CacheCleaner::clearUrl($model->url);
+                    });
+                });
+
+                \RainLab\Pages\Classes\Menu::extend(function ($model) {
+                    $model->bindEvent('model.afterSave', function () use ($model) {
+                        CacheCleaner::clear();
+                    });
+                });
+            }
+
+            /* Rainlab Blog */
+            if (class_exists('\RainLab\Blog\Plugin')) {
+                \RainLab\Blog\Models\Post::extend(function ($model) use ($settings) {
+                    $model->bindEvent('model.afterSave', function () use ($model, $settings) {
+                        /* TODO Setup clearing cache of scheduled posts */
+
+                        CacheCleaner::clearPost($model, $settings);
+                    });
+                });
+
+                \RainLab\Blog\Models\Category::extend(function ($model) use ($settings) {
+                    $model->bindEvent('model.afterSave', function () use ($model, $settings) {
+                        CacheCleaner::clearCategory($model, $settings);
+                    });
+                });
+            }
+        }
     }
 
     /**

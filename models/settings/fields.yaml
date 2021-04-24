@@ -2,7 +2,7 @@ tabs:
     fields:
         exclude:
             stretch: true
-            tab: bizmark.quicksilver::lang.settings.tab
+            tab: bizmark.quicksilver::lang.settings.tabs.exceptions
             type: repeater
             titleFrom: url
             form:
@@ -11,3 +11,121 @@ tabs:
                         label: bizmark.quicksilver::lang.settings.fields.url_pattern
                         required: true
                         type: text
+
+        auto_clearing:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.auto_clearing
+            comment: bizmark.quicksilver::lang.settings.fields.auto_clearing_comment
+            type: checkbox
+
+        blog_post:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.label
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.comment
+            type: section
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_post_pattern:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_comment
+            type: dropdown
+            required: true
+            cssClass: input-sidebar-control
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_post_pattern_post_slug:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_post_slug
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_post_slug_comment
+            type: text
+            required: true
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_post_pattern_category_Slug:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug_comment
+            type: text
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_post_extra_urls:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_comment
+            prompt: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_prompt
+            type: repeater
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+            form:
+                fields:
+                    url:
+                        label: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_label
+                        span: full
+                        type: text
+
+
+        blog_category:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.category.label
+            comment: bizmark.quicksilver::lang.settings.fields.blog.category.comment
+            type: section
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_category_pattern:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern
+            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_comment
+            type: dropdown
+            cssClass: input-sidebar-control
+            required: true
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_category_pattern_slug:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_slug
+            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_slug_comment
+            type: text
+            required: true
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+
+        blog_category_extra_urls:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls
+            comment: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_comment
+            prompt: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_prompt
+            type: repeater
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+            form:
+                fields:
+                    url:
+                        label: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_label
+                        span: full
+                        type: text
+

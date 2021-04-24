@@ -8,9 +8,42 @@ return [
     'settings' => [
         'label' => 'Quicksilver',
         'description' => 'Plugin settings, adding exceptions',
-        'tab' => 'Exceptions',
+        'tabs' => [
+            'exceptions' => 'Exceptions',
+            'clearing' => 'Clearing'
+        ],
         'fields' => [
             'url_pattern' => 'Route pattern',
+            'auto_clearing' => 'Auto cache clearing',
+            'auto_clearing_comment' => 'Clear cache after save model of: cms/page, rainlab/post, rainlab/post-category, rainlab/static-page, rainlab/menu.',
+            'blog' => [
+                'post' => [
+                    'label' => 'Post',
+                    'comment' => 'Posts cache clearing rules',
+                    'pattern' => 'URL pattern for posts',
+                    'pattern_comment' => 'Select posts URL pattern',
+                    'pattern_post_slug' => 'Post slug variable',
+                    'pattern_post_slug_comment' => 'Write variable name of post slug (ex: slug)',
+                    'pattern_category_slug' => 'Category slug variable',
+                    'pattern_category_slug_comment' => 'Write variable name of category slug (ex: slug)',
+                    'extra_urls' => 'Extra Urls',
+                    'extra_urls_comment' => 'Urls which should be cleaned after post saving. For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
+                    'extra_urls_prompt' => 'Add url',
+                    'extra_urls_label' => 'Url',
+                ],
+                'category' => [
+                    'label' => 'Category',
+                    'comment' => 'Categories cache clearing rules',
+                    'pattern' => 'URL pattern for categories',
+                    'pattern_comment' => 'Select categories URL pattern',
+                    'pattern_slug' => 'Category slug variable',
+                    'pattern_slug_comment' => 'Write variable name of slug category (ex: slug)',
+                    'extra_urls' => 'Extra Urls',
+                    'extra_urls_comment' => 'Urls which should be cleaned after category saving. For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
+                    'extra_urls_prompt' => 'Add url',
+                    'extra_urls_label' => 'Url',
+                ]
+            ]
         ]
     ],
     'reportwidget' => [
