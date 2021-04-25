@@ -91,9 +91,7 @@ class Plugin extends PluginBase
             if (class_exists('\RainLab\Blog\Plugin')) {
                 \RainLab\Blog\Models\Post::extend(function ($model) {
                     $model->bindEvent('model.afterSave', function () use ($model) {
-                        /* TODO Setup clearing cache of scheduled posts */
-
-                        CacheCleaner::clearPost($model);
+                        CacheCleaner::scheduleOrClearPost($model);
                     });
                 });
 
@@ -103,6 +101,18 @@ class Plugin extends PluginBase
                     });
                 });
             }
+        }
+    }
+
+    /**
+     * Registering schedule for clearing cache for scheduled posts
+     * */
+    public function registerSchedule($schedule): void
+    {
+        if (class_exists('\RainLab\Blog\Plugin')) {
+            $schedule->call(function () {
+                CacheCleaner::checkScheduledPosts();
+            })->everyMinute();
         }
     }
 
