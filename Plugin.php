@@ -65,8 +65,7 @@ class Plugin extends PluginBase
         });
 
         /* Auto clearing */
-        $settings = Settings::instance();
-        if ((int) $settings->auto_clearing === 1) {
+        if (Settings::isAutoclearingEnabled() === true) {
             Page::extend(function ($model) {
                 $model->bindEvent('model.afterSave', function () use ($model) {
                     CacheCleaner::clearUrl($model->url);
@@ -90,17 +89,17 @@ class Plugin extends PluginBase
 
             /* Rainlab Blog */
             if (class_exists('\RainLab\Blog\Plugin')) {
-                \RainLab\Blog\Models\Post::extend(function ($model) use ($settings) {
-                    $model->bindEvent('model.afterSave', function () use ($model, $settings) {
+                \RainLab\Blog\Models\Post::extend(function ($model) {
+                    $model->bindEvent('model.afterSave', function () use ($model) {
                         /* TODO Setup clearing cache of scheduled posts */
 
-                        CacheCleaner::clearPost($model, $settings);
+                        CacheCleaner::clearPost($model);
                     });
                 });
 
-                \RainLab\Blog\Models\Category::extend(function ($model) use ($settings) {
-                    $model->bindEvent('model.afterSave', function () use ($model, $settings) {
-                        CacheCleaner::clearCategory($model, $settings);
+                \RainLab\Blog\Models\Category::extend(function ($model) {
+                    $model->bindEvent('model.afterSave', function () use ($model) {
+                        CacheCleaner::clearCategory($model);
                     });
                 });
             }

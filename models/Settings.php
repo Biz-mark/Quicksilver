@@ -33,6 +33,14 @@ class Settings extends Model
     public $settingsFields = 'fields.yaml';
 
     /**
+     * @return bool
+     */
+    public static function isAutoClearingEnabled() : bool
+    {
+        return (int) Settings::instance()->get('auto_clearing', false) === 1;
+    }
+
+    /**
      * @return array
      */
     public static function getExcludeListPatterns(): array

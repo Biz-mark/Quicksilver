@@ -1,8 +1,4 @@
-<?php
-
-
-namespace BizMark\Quicksilver\Classes;
-
+<?php namespace BizMark\Quicksilver\Classes;
 
 use BizMark\Quicksilver\Models\Settings;
 use Illuminate\Support\Facades\Artisan;
@@ -13,17 +9,17 @@ class CacheCleaner
      * Rainlab post's cache clearing
      *
      * @param object $post
-     * @param Settings $settings
      * @return void
      */
-    static function clearPost(object $post, Settings $settings): void
+    public static function clearPost(object $post): void
     {
+        $settings = Settings::instance();
+
         $urlsToClear = [];
 
         if (
             !empty($settings->blog_post_pattern) &&
             !empty($settings->blog_post_pattern_post_slug)
-
         ) {
             $postUrl = trim(str_replace(":{$settings->blog_post_pattern_post_slug}", $post->slug, $settings->blog_post_pattern));
 
@@ -40,7 +36,7 @@ class CacheCleaner
                         !empty($settings->blog_category_pattern) &&
                         !empty($settings->blog_category_pattern_slug)
                     ) {
-                        $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)).'*';
+                        $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)) . '*';
                     }
                 }
             } else {
@@ -50,7 +46,8 @@ class CacheCleaner
 
         /* Prepare extra urls */
         if (!empty($settings->blog_post_extra_urls)) {
-            $urlsToClear = [...$urlsToClear, ...array_column($settings->blog_post_extra_urls, 'url')];
+            $urlsToClear = [...$urlsToClear,
+                            ...array_column($settings->blog_post_extra_urls, 'url')];
         }
 
 
@@ -63,7 +60,7 @@ class CacheCleaner
             $postCategoriesSlugs = $post->categories()->pluck('slug')->toArray();
 
             foreach ($postCategoriesSlugs as $postCategorySlug) {
-                $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)).'*';
+                $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)) . '*';
             }
         }
 
@@ -72,11 +69,12 @@ class CacheCleaner
 
     /**
      * @param object $category
-     * @param Settings $settings
      * @return void
      */
-    static function clearCategory(object $category, Settings $settings): void
+    public static function clearCategory(object $category): void
     {
+        $settings = Settings::instance();
+
         $urlsToClear = [];
 
         /* Clear category page and child pages recursively */
@@ -85,10 +83,10 @@ class CacheCleaner
             !empty($settings->blog_category_pattern_slug)
 
         ) {
-            $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $category->slug, $settings->blog_category_pattern)).'*';
+            $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $category->slug, $settings->blog_category_pattern)) . '*';
         }
 
-        /* Clear category posts*/
+        /* Clear category posts */
         if (
             !empty($settings->blog_post_pattern) &&
             !empty($settings->blog_post_pattern_post_slug)
@@ -108,7 +106,8 @@ class CacheCleaner
 
         /* Clear extra urls */
         if (!empty($settings->blog_category_extra_urls)) {
-            $urlsToClear = [...$urlsToClear, ...array_column($settings->blog_category_extra_urls, 'url')];
+            $urlsToClear = [...$urlsToClear,
+                            ...array_column($settings->blog_category_extra_urls, 'url')];
         }
 
         self::clearUrls($urlsToClear);
@@ -118,7 +117,7 @@ class CacheCleaner
      * @param array $urls
      * @return void
      */
-    static function clearUrls(array $urls): void
+    public static function clearUrls(array $urls): void
     {
         foreach ($urls as $url) {
             self::clearUrl($url);
@@ -129,7 +128,7 @@ class CacheCleaner
      * @param string $url
      * @return void
      */
-    static function clearUrl(string $url): void
+    public static function clearUrl(string $url): void
     {
         $url = preg_replace('/\*$/', ' --recursive', $url);
 
@@ -139,7 +138,7 @@ class CacheCleaner
     /**
      * @return void
      */
-    static function clear(): void
+    public static function clear(): void
     {
         Artisan::call('page-cache:clear');
     }
