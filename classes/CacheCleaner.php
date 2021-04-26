@@ -196,9 +196,14 @@ class CacheCleaner
      */
     public static function clearUrl(string $url): void
     {
-        $url = preg_replace('/\*$/', ' --recursive', $url);
+        $properties = [];
+        if (preg_match('/\*$/', $url) === 1) {
+            $properties['--recursive'] = true;
+        }
 
-        Artisan::call('page-cache:clear ' . $url);
+        $properties['slug'] = preg_replace('/\*$/', '', $url);
+
+        Artisan::call('page-cache:clear', $properties);
     }
 
     /**

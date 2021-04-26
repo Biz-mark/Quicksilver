@@ -50,7 +50,7 @@ tabs:
                 field: auto_clearing
                 condition: checked
 
-        blog_post_pattern_category_Slug:
+        blog_post_pattern_category_slug:
             tab: bizmark.quicksilver::lang.settings.tabs.clearing
             label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug
             comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug_comment
