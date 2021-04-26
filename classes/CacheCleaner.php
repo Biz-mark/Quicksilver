@@ -46,8 +46,13 @@ class CacheCleaner
 
         /* Prepare extra urls */
         if (!empty($settings->blog_post_extra_urls)) {
-            $urlsToClear = [...$urlsToClear,
-                            ...array_column($settings->blog_post_extra_urls, 'url')];
+            foreach (array_column($settings->blog_post_extra_urls, 'url') as $extraUrl) {
+                if ($settings->blog_post_pattern_category_slug) {
+                    $extraUrl = trim(str_replace(":{$settings->blog_post_pattern_post_slug}", $post->slug, $extraUrl));
+                }
+
+                $urlsToClear[] = $extraUrl;
+            }
         }
 
         /* Prepare post categories pages and child pages recursively if they have not been prepared before */
@@ -162,8 +167,13 @@ class CacheCleaner
 
         /* Clear extra urls */
         if (!empty($settings->blog_category_extra_urls)) {
-            $urlsToClear = [...$urlsToClear,
-                            ...array_column($settings->blog_category_extra_urls, 'url')];
+            foreach (array_column($settings->blog_category_extra_urls, 'url') as $extraUrl) {
+                if ($settings->blog_category_pattern_slug) {
+                    $extraUrl = trim(str_replace(":{$settings->blog_post_pattern_post_slug}", $category->slug, $extraUrl));
+                }
+
+                $urlsToClear[] = $extraUrl;
+            }
         }
 
         self::clearUrls($urlsToClear);

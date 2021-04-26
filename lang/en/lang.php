@@ -27,7 +27,7 @@ return [
                     'pattern_category_slug' => 'Category slug variable',
                     'pattern_category_slug_comment' => 'Write variable name of category slug (ex: slug)',
                     'extra_urls' => 'Extra Urls',
-                    'extra_urls_comment' => 'Urls which should be cleaned after post saving. For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
+                    'extra_urls_comment' => 'Urls which should be cleaned after post saving. You can use slug variable had set above like "/:slug". For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
                     'extra_urls_prompt' => 'Add url',
                     'extra_urls_label' => 'Url',
                 ],
@@ -39,7 +39,7 @@ return [
                     'pattern_slug' => 'Category slug variable',
                     'pattern_slug_comment' => 'Write variable name of slug category (ex: slug)',
                     'extra_urls' => 'Extra Urls',
-                    'extra_urls_comment' => 'Urls which should be cleaned after category saving. For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
+                    'extra_urls_comment' => 'Urls which should be cleaned after category saving. You can use slug variable had set above like "/:slug". For recursive clearing add "*" to the end (ex: /blog/* , but url /blog will not be cleared, you should add both variants separately)',
                     'extra_urls_prompt' => 'Add url',
                     'extra_urls_label' => 'Url',
                 ]

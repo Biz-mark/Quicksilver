@@ -33,7 +33,6 @@ tabs:
             label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern
             comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_comment
             type: dropdown
-            required: true
             cssClass: input-sidebar-control
             trigger:
                 action: show
@@ -95,7 +94,6 @@ tabs:
             comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_comment
             type: dropdown
             cssClass: input-sidebar-control
-            required: true
             trigger:
                 action: show
                 field: auto_clearing
