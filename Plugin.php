@@ -1,9 +1,8 @@
 <?php namespace BizMark\Quicksilver;
 
-use Event;
+use Backend, Event;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
-use System\Classes\SettingsManager;
 use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Cache;
 use BizMark\Quicksilver\Classes\Console\ClearCache;
