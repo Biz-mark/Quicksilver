@@ -24,20 +24,19 @@ class CacheCleaner
         ) {
             $postUrl = trim(str_replace(":{$settings->blog_post_pattern_post_slug}", $post->slug, $settings->blog_post_pattern));
 
+            /* Exclude variables from url */
+            if (!empty($settings->blog_post_pattern_exclude_variables)) {
+                foreach (array_column($settings->blog_post_pattern_exclude_variables, 'variable') as $variable) {
+                    $postUrl = trim(str_replace(":$variable", '', $postUrl));
+                }
+            }
+
             /* Prepare post urls for each category */
             if (!empty($settings->blog_post_pattern_category_slug)) {
                 $postCategoriesSlugs = $post->categories()->pluck('slug')->toArray();
 
                 foreach ($postCategoriesSlugs as $postCategorySlug) {
                     $urlsToClear[] = trim(str_replace(":{$settings->blog_post_pattern_category_slug}", $postCategorySlug, $postUrl));
-
-                    /* Prepare urls of each category and child pages recursively */
-                    if (
-                        !empty($settings->blog_category_pattern) &&
-                        !empty($settings->blog_category_pattern_slug)
-                    ) {
-                        $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)) . '*';
-                    }
                 }
             } else {
                 $urlsToClear[] = $postUrl;
@@ -47,7 +46,7 @@ class CacheCleaner
         /* Prepare extra urls */
         if (!empty($settings->blog_post_extra_urls)) {
             foreach (array_column($settings->blog_post_extra_urls, 'url') as $extraUrl) {
-                if ($settings->blog_post_pattern_category_slug) {
+                if ($settings->blog_post_pattern_post_slug) {
                     $extraUrl = trim(str_replace(":{$settings->blog_post_pattern_post_slug}", $post->slug, $extraUrl));
                 }
 
@@ -55,16 +54,27 @@ class CacheCleaner
             }
         }
 
-        /* Prepare post categories pages and child pages recursively if they have not been prepared before */
+        /* Prepare post categories pages and child pages recursively */
         if (
-            empty($postCategoriesSlugs) &&
             !empty($settings->blog_category_pattern) &&
             !empty($settings->blog_category_pattern_slug)
         ) {
+            /* Exclude variables from url */
+            if (!empty($settings->blog_category_pattern_exclude_variables)) {
+                foreach (array_column($settings->blog_category_pattern_exclude_variables, 'variable') as $variable) {
+                    $settings->blog_category_pattern = trim(str_replace(":$variable", '', $settings->blog_category_pattern));
+                }
+            }
+
+            $settings->blog_category_pattern = trim(rtrim($settings->blog_category_pattern, '/'));
+
             $postCategoriesSlugs = $post->categories()->pluck('slug')->toArray();
 
             foreach ($postCategoriesSlugs as $postCategorySlug) {
-                $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern)) . '*';
+                $categoryUrl = str_replace(":{$settings->blog_category_pattern_slug}", $postCategorySlug, $settings->blog_category_pattern);
+
+                $urlsToClear[] = $categoryUrl;
+                $urlsToClear[] = $categoryUrl . '/*';
             }
         }
 
@@ -144,7 +154,20 @@ class CacheCleaner
             !empty($settings->blog_category_pattern_slug)
 
         ) {
-            $urlsToClear[] = trim(str_replace(":{$settings->blog_category_pattern_slug}", $category->slug, $settings->blog_category_pattern)) . '*';
+            /* Exclude variables from url */
+            if (!empty($settings->blog_category_pattern_exclude_variables)) {
+                foreach (array_column($settings->blog_category_pattern_exclude_variables, 'variable') as $variable) {
+                    $settings->blog_category_pattern = str_replace(":$variable", '', $settings->blog_category_pattern);
+                }
+            }
+
+            $settings->blog_category_pattern = trim(rtrim($settings->blog_category_pattern, '/'));
+
+
+            $categoryUrl = str_replace(":{$settings->blog_category_pattern_slug}", $category->slug, $settings->blog_category_pattern);
+
+            $urlsToClear[] = $categoryUrl;
+            $urlsToClear[] = $categoryUrl . '/*';
         }
 
         /* Clear category posts */

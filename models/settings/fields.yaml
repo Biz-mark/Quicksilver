@@ -60,6 +60,23 @@ tabs:
                 field: auto_clearing
                 condition: checked
 
+        blog_post_pattern_exclude_variables:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_exclude_variables
+            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_exclude_variable_comment
+            prompt: bizmark.quicksilver::lang.settings.fields.blog.post.exclude_variable_prompt
+            type: repeater
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+            form:
+                fields:
+                    variable:
+                        label: bizmark.quicksilver::lang.settings.fields.blog.post.exclude_variable_label
+                        span: full
+                        type: text
+
         blog_post_extra_urls:
             tab: bizmark.quicksilver::lang.settings.tabs.clearing
             label: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls
@@ -109,6 +126,23 @@ tabs:
                 action: show
                 field: auto_clearing
                 condition: checked
+
+        blog_category_pattern_exclude_variables:
+            tab: bizmark.quicksilver::lang.settings.tabs.clearing
+            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_exclude_variables
+            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_exclude_variable_comment
+            prompt: bizmark.quicksilver::lang.settings.fields.blog.category.exclude_variable_prompt
+            type: repeater
+            trigger:
+                action: show
+                field: auto_clearing
+                condition: checked
+            form:
+                fields:
+                    variable:
+                        label: bizmark.quicksilver::lang.settings.fields.blog.category.exclude_variable_label
+                        span: full
+                        type: text
 
         blog_category_extra_urls:
             tab: bizmark.quicksilver::lang.settings.tabs.clearing
