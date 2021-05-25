@@ -92,8 +92,9 @@ class Cache implements PageCacheContract
         $isRequestAccess      = $request->isMethod('GET') && $request->getQueryString() === null;
         $isRequestQueryAccess = $response->getStatusCode() === 200 && $request->getQueryString() === null;
         $isBackendUri         = !Str::contains($request->getUri(), Config::get('cms::backendUri', 'backend'));
+        $isNotAssetsCombined  = !Str::contains($request->getUri(), $request->getSchemeAndHttpHost() . '/combine/');
 
-        return $isRequestAccess && $isRequestQueryAccess && $isBackendUri;
+        return $isRequestAccess && $isRequestQueryAccess && $isBackendUri && $isNotAssetsCombined;
     }
 
     /**
