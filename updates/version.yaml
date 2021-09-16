@@ -9,4 +9,4 @@ v1.2.1: Fixing typo in russian localization
 v1.2.2: Minor fixes
 v1.3.0: !!! Query strings filtering for dynamic pages.
 v2.0.0: Added support for exceptions and the ability to disable some pages from the cache
-v2.1.0: Auto cleaning default caches, refactoring
+v2.1.0: Auto clearing default caches, refactoring
