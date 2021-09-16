@@ -1,12 +1,12 @@
-1.0.0: First version of Quicksilver
-1.0.1: Removed routes.php file
-1.1.0: !!! Updated configuration section in README. To actually use power of this plugin please configure it.
-1.1.1: Note about AJAX on cached pages in README
-1.1.5: !!! Ajax requests now work properly on cached pages. Place new code in your htaccess like in documentation
-1.1.6: Fixing backend opening error
-1.2.0: !!! New ReportWidget for dashboard that allows quiclky purge pages cache and october cache.
-1.2.1: Fixing typo in russian localization
-1.2.2: Minor fixes
-1.3.0: !!! Query strings filtering for dynamic pages.
-1.4.0: !!! Reverting query string filtering due found bug. Please check update manual.
-2.0.0: !!! Refactoring and new method of excluding URL's from caching. Thanks LeMaX10 for contribution.
+v1.0.0: First version of Quicksilver
+v1.0.1: Removed routes.php file
+v1.1.0: !!! Updated configuration section in README. To actually use power of this plugin please configure it.
+v1.1.1: Note about AJAX on cached pages in README
+v1.1.5: !!! Ajax requests now work properly on cached pages. Place new code in your htaccess like in documentation
+v1.1.6: Fixing backend opening error
+v1.2.0: !!! New ReportWidget for dashboard that allows quiclky purge pages cache and october cache.
+v1.2.1: Fixing typo in russian localization
+v1.2.2: Minor fixes
+v1.3.0: !!! Query strings filtering for dynamic pages.
+v2.0.0: Added support for exceptions and the ability to disable some pages from the cache
+v2.1.0: Auto cleaning default caches, refactoring
