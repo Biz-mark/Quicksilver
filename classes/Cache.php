@@ -112,7 +112,6 @@ class Cache implements PageCacheContract
     public function cache(Request $request, Response $response): PageCacheContract
     {
         [$path, $file] = $this->getDirectoryAndFileNames($request);
-        dd($request);
 
         $this->files->makeDirectory($path, 0775, true, true);
 
