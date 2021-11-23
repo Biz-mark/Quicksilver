@@ -89,8 +89,8 @@ class Cache implements PageCacheContract
      */
     public function shouldCache(Request $request, Response $response): bool
     {
-        $isRequestAccess      = $request->isMethod('GET') && $request->getQueryString() === null;
-        $isRequestQueryAccess = $response->getStatusCode() === 200 && $request->getQueryString() === null;
+        $isRequestAccess      = $request->isMethod('GET');
+        $isRequestQueryAccess = $response->getStatusCode() === 200;
         $isBackendUri         = !Str::contains($request->getUri(), Config::get('cms::backendUri', 'backend'));
         $isNotAssetsCombined  = !Str::contains($request->getUri(), $request->getSchemeAndHttpHost() . '/combine/');
 
@@ -112,6 +112,7 @@ class Cache implements PageCacheContract
     public function cache(Request $request, Response $response): PageCacheContract
     {
         [$path, $file] = $this->getDirectoryAndFileNames($request);
+        dd($request);
 
         $this->files->makeDirectory($path, 0775, true, true);
 
