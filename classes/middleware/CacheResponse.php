@@ -56,8 +56,7 @@ class CacheResponse
     {
         return !$this->isExclude($request)
             && $this->cache->shouldCache($request, $response)
-            && !BackendAuth::check()
-            && !$this->cache->hasCache($request);
+            && !BackendAuth::check();
     }
 
     protected function isExclude(Request $request): bool
