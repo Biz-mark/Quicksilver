@@ -25,6 +25,19 @@ class Cache implements PageCacheContract
     protected const DIRECTORY = 'page-cache';
 
     /**
+     * Allowed file types
+     * Supporting basic web pages, api responses and robots
+     */
+    protected const ALLOWED_TYPES = [
+        'html',
+        'htm',
+        'json',
+        'rss',
+        'xml',
+        'txt'
+    ];
+
+    /**
      * The filesystem instance.
      *
      * @var Filesystem
@@ -100,18 +113,9 @@ class Cache implements PageCacheContract
     /**
      * @inheritDoc
      */
-    public function hasCache(Request $request): bool
-    {
-        $cachePath = $this->getCachePath($request->getRequestUri() . '.html');
-        return $this->files->exists($cachePath);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function cache(Request $request, Response $response): PageCacheContract
     {
-        [$path, $file] = $this->getDirectoryAndFileNames($request);
+        [$path, $file] = $this->getDirectoryAndFileNames($request, $response);
 
         $this->files->makeDirectory($path, 0775, true, true);
 
@@ -129,7 +133,8 @@ class Cache implements PageCacheContract
      */
     public function forget(?string $slug): bool
     {
-        return $this->files->delete($this->getCachePath($this->aliasFilename($slug).'.html'));
+        $matchingFiles = $this->files->glob($this->getCachePath($this->aliasFilename($slug).'[q_*'));
+        return $this->files->delete($matchingFiles);
     }
 
     /**
@@ -176,13 +181,23 @@ class Cache implements PageCacheContract
      * @return array
      * @throws Exception
      */
-    protected function getDirectoryAndFileNames(Request $request): array
+    protected function getDirectoryAndFileNames(Request $request, Response $response): array
     {
         $requestPath = ltrim($request->getPathInfo(), '/');
 
         $segments = $requestPath === "" ? [''] : array_filter(explode('/', $requestPath));
 
-        $file = $this->aliasFilename(array_pop($segments)).'.html';
+        // Need args directly from the server request. Don't use parse_url because it re-orders args and
+        // web servers can't handle without additional modules probably unavailable on default installs
+        // where this plugin adds most value (i.e. Cannot configure true cache)
+        $queryString = $_SERVER['QUERY_STRING'] ? $_SERVER['QUERY_STRING'] : null;
+
+        $extension = $this->getFileExtension($response, $requestPath);
+
+        // We place query string in bracket and prefix q_ even if empty to make it easy to configure web server
+        // todo consider method prefix and differentiate ajax requests.
+        $file = $this->aliasFilename(array_pop($segments)) . "[q_$queryString].$extension";
+
         return [
             $this->getCachePath(implode('/',$segments)),
             $file
@@ -208,5 +223,51 @@ class Cache implements PageCacheContract
     protected function getDefaultCachePath(): ?string
     {
         return storage_path(static::DIRECTORY);
+    }
+
+    /**
+     * Choose a file extension compatible with the content-type or explicitly declared extension
+     *
+     *
+     * @param Response $response
+     * @param string $requestPath
+     *
+     * @return string
+     */
+    protected function getFileExtension(Response $response, $requestPath)
+    {
+        // Check if request path ends with a valid file extension
+        $existingExtension = explode(".", $requestPath);
+        $existingExtension = strtolower(array_pop($existingExtension));
+        if (in_array($existingExtension, self::ALLOWED_TYPES)) {
+            return $existingExtension;
+        }
+
+        // Determine the file extension from content
+        $contentType = $response->headers->get('content-type');
+
+        // Some very loose checks
+        // Test RSS before XML
+        if (str_contains($contentType, "rss")) {
+            return 'rss';
+        }
+
+        if (str_contains($contentType, "xml")) {
+            return 'xml';
+        }
+
+        if (str_contains($contentType, "json") || str_contains($contentType, "x-javascript")) {
+            return 'json';
+        }
+
+        if (str_contains($contentType, "html")) {
+            return 'html';
+        }
+
+        if (str_contains($contentType, "text/plain")) {
+            return 'txt';
+        }
+
+        return false;
     }
 }
