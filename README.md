@@ -50,11 +50,18 @@ Open Settings in the control panel of your OctoberCMS website. Go to Updates & P
 
 ```nginx
 location = / {
-    try_files /storage/page-cache/pc__index__pc.html /index.php?$query_string;
+    try_files /storage/page-cache/pc__index__pc[q_${args}].html /index.php?$args;
 }
 
 location / {
-    try_files $uri $uri/ /storage/page-cache/$uri.html /storage/page-cache/$uri.json /index.php?$query_string;
+   # Try the Quicksilver cache before booting PHP.
+   try_files $uri $uri/ \
+       /storage/page-cache/${uri}[q_${args}].html \
+       /storage/page-cache/${uri}[q_${args}].json \
+       /storage/page-cache/${uri}[q_${args}].rss \
+       /storage/page-cache/${uri}[q_${args}].xml \
+       /storage/page-cache/${uri}[q_${args}].txt \
+       /index.php?$args;
 }
 ```
 
