@@ -1,6 +1,6 @@
 # OctoberCMS lightning fast static files cache system
 
-[Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/bizmark-quicksilver)
+[Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/BizMark-quicksilver)
 
 This is adaptation of package: [JosephSilber/page-cache](https://github.com/JosephSilber/page-cache) (Go get him some stars)
 

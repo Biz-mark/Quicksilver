@@ -1,7 +1,7 @@
 {
-    "name": "bizmark/quicksilver-plugin",
+    "name": "BizMark/quicksilver-plugin",
     "type": "october-plugin",
-    "description": "Lightning fast cache for your static website",
+    "description": "No description provided yet...",
     "require": {
         "composer/installers": "~1.0"
     }
