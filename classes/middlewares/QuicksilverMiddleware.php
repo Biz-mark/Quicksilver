@@ -37,14 +37,14 @@ class QuicksilverMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($this->cache->hasCache($request)) {
+        if ($this->cache->has($request)) {
             return $this->cache->get($request);
         }
 
         $response = $next($request);
 
-        if ($this->cache->shouldCache($request, $response)) {
-            $this->cache->cache($request, $response);
+        if ($this->cache->validate($request, $response)) {
+            $this->cache->store($request, $response);
         }
 
         return $response;

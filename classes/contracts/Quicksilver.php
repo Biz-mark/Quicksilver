@@ -16,7 +16,7 @@ interface Quicksilver
      * @param Request $request
      * @return bool
      */
-    public function hasCache(Request $request): bool;
+    public function has(Request $request): bool;
 
     /**
      * Determines whether the given request/response pair should be cached.
@@ -25,7 +25,7 @@ interface Quicksilver
      * @param Response $response
      * @return bool
      */
-    public function shouldCache(Request $request, Response $response): bool;
+    public function validate(Request $request, Response $response): bool;
 
     /**
      * Cache the response to a file.

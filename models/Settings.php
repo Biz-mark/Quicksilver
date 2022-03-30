@@ -2,6 +2,9 @@
 
 use Model;
 
+/**
+ * @method static $this get(string $key, mixed $default)
+ */
 class Settings extends Model
 {
     /**

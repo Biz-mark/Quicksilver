@@ -1,12 +1,12 @@
 <?php namespace BizMark\Quicksilver;
 
 use Backend;
-use BizMark\Quicksilver\Models\Settings;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
 
+use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
-use BizMark\Quicksilver\Classes\Caches\FileStorageCache;
+use BizMark\Quicksilver\Classes\Caches\StorageCache;
 use BizMark\Quicksilver\Classes\Middlewares\QuicksilverMiddleware;
 
 /**
@@ -24,10 +24,10 @@ class Plugin extends PluginBase
     public function pluginDetails(): array
     {
         return [
-            'name'        => 'bizmark.quicksilver::lang.plugin.name',
+            'name' => 'bizmark.quicksilver::lang.plugin.name',
             'description' => 'bizmark.quicksilver::lang.plugin.description',
-            'author'      => 'Biz-Mark, Nick Khaetsky',
-            'icon'        => 'icon-bolt'
+            'author' => 'Biz-Mark, Nick Khaetsky',
+            'icon' => 'icon-bolt'
         ];
     }
 
@@ -38,7 +38,7 @@ class Plugin extends PluginBase
      */
     public function register()
     {
-        $this->app->bind(Quicksilver::class, FileStorageCache::class);
+        $this->app->bind(Quicksilver::class, StorageCache::class);
     }
 
     /**
@@ -60,11 +60,11 @@ class Plugin extends PluginBase
     {
         return [
             'settings' => [
-                'label'       => 'bizmark.quicksilver::lang.settings.label',
+                'label' => 'bizmark.quicksilver::lang.settings.label',
                 'description' => 'bizmark.quicksilver::lang.settings.description',
-                'class'       => Settings::class,
-                'icon'        => 'icon-cog',
-                'category'    => 'bizmark.quicksilver::lang.plugin.name'
+                'class' => Settings::class,
+                'icon' => 'icon-cog',
+                'category' => 'bizmark.quicksilver::lang.plugin.name'
             ]
         ];
     }
