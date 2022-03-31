@@ -47,16 +47,15 @@ interface Quicksilver
     /**
      * Remove the cached file for the given slug.
      *
-     * @param string|null $slug
+     * @param string $path
      * @return bool
      */
-    public function forget(?string $slug): bool;
+    public function forget(string $path): bool;
 
     /**
      * Fully clear the cache directory.
      *
-     * @param  string|null
      * @return bool
      */
-    public function clear(?string $path): bool;
+    public function clear(): bool;
 }

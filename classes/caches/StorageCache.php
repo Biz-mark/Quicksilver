@@ -19,58 +19,117 @@ class StorageCache extends AbstractCache
      */
     private string $cacheDirectory = 'page-cache';
 
+    /**
+     * Get requested page from cache
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function get(Request $request): Response
     {
-        return new Response('', 200);
+        $fileInformation = $this->getFileInformation($request->path(), $request);
+        return new Response(Storage::get($fileInformation['fullPath']), 200);
     }
 
+    /**
+     * Store response to storage cache
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return Quicksilver
+     */
     public function store(Request $request, Response $response): Quicksilver
     {
         if (!Storage::exists($this->cacheDirectory)) {
             Storage::makeDirectory($this->cacheDirectory);
         }
 
-        // Get request full route. /demo/acme/page
-        $requestedRoute = $request->path();
-        $pageName = basename($requestedRoute); // TODO: Consider query strings
+        $fileInformation = $this->getFileInformation($request->path(), $response);
 
-        // File path information
-        $fileExtension = $this->getResponseContentType($response);
-        $fileName = (empty($pageName) ? 'qs__index__qs' : $pageName) . $fileExtension;
-        $filePath = $this->cacheDirectory.DIRECTORY_SEPARATOR.dirname($requestedRoute);
-
-        if (!Storage::exists($filePath)) {
-            Storage::makeDirectory($filePath);
+        if (!Storage::exists($fileInformation['dirname'])) {
+            Storage::makeDirectory($fileInformation['dirname']);
         }
 
-        Storage::put($filePath.DIRECTORY_SEPARATOR.$fileName, $response->getContent());
+        Storage::put($fileInformation['fullPath'], $response->getContent());
 
         return $this;
     }
 
+    /**
+     * Check if storage has request cached in storage
+     *
+     * @param Request $request
+     * @return bool
+     */
     public function has(Request $request): bool
     {
-        return false;
+        if (!Storage::exists($this->cacheDirectory)) {
+            return false;
+        }
+
+        $fileInformation = $this->getFileInformation($request->path(), $request);
+        if (!Storage::exists($fileInformation['fullPath'])) {
+            return false;
+        }
+
+        return true;
     }
 
-    public function forget(?string $slug): bool
+    /**
+     * Remove specific route from storage cache
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function forget(string $path): bool
     {
-
+        return Storage::delete($path);
     }
 
-    public function clear(?string $path): bool
+    /**
+     * Clear whole storage page cache
+     *
+     * @return bool
+     */
+    public function clear(): bool
     {
-
+        return Storage::delete($this->cacheDirectory);
     }
 
-    protected function getResponseContentType(Response $response): string
+    /**
+     * Get requested file path as array with information
+     *
+     * @param string $path
+     * @param $headersBag
+     * @return string[]
+     */
+    protected function getFileInformation(string $path, $headersBag): array
     {
-        $responseHeaders = $response->headers;
-        if (!$responseHeaders->has('content-type')) {
+        $pageName = basename($path); // TODO: Consider query strings
+        $fileName = (empty($pageName) ? 'qs__index__qs' : $pageName) . $this->getFileExtension($headersBag);
+        $filePath = $this->cacheDirectory . DIRECTORY_SEPARATOR . dirname($path);
+
+        return [
+            'dirname' => $filePath,
+            'fullPath' => $filePath . DIRECTORY_SEPARATOR . $fileName,
+            'fileName' => $fileName
+        ];
+    }
+
+    /**
+     * Get file extension from headers content type
+     *
+     * @param Response|Request $headersBag
+     * @return string
+     */
+    protected function getFileExtension($headersBag = null): string
+    {
+        $headers = $headersBag->headers;
+        if (empty($headers) || !$headers->has('content-type')) {
             return '.html';
         }
 
-        $contentTypeBag = explode('|', $responseHeaders->get('content-type'));
+        $contentTypeBag = explode('|', $headers->get('content-type'));
         $contentType = array_shift($contentTypeBag);
 
         switch ($contentType) {
