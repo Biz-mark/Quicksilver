@@ -9,3 +9,13 @@ tabs:
             label: bizmark.quicksilver::lang.field.cache_query_strings.label
             comment: bizmark.quicksilver::lang.field.cache_query_strings.comment
             type: switch
+
+        exclude_paths:
+            tab: bizmark.quicksilver::lang.tab.exclude
+            type: repeater
+            span: left
+            form:
+                fields:
+                    path:
+                        label: bizmark.quicksilver::lang.field.excluded.path.label
+                        comment: bizmark.quicksilver::lang.field.excluded.path.comment

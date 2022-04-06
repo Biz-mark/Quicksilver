@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
+use BizMark\Quicksilver\Models\Settings;
+
 /**
  * StorageCache class
  * @package BizMark\Quicksilver\Classes\Caches
@@ -20,6 +22,22 @@ class StorageCache extends AbstractCache
     private string $cacheDirectory = 'page-cache';
 
     /**
+     * Should we cache page with different query strings?
+     *
+     * @var bool
+     */
+    private bool $isQueryShouldCache;
+
+    /**
+     * StorageCache constructor.
+     *
+     * @return void
+     */
+    public function __construct() {
+        $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
+    }
+
+    /**
      * Get requested page from cache
      *
      * @param Request $request
@@ -27,8 +45,10 @@ class StorageCache extends AbstractCache
      */
     public function get(Request $request): Response
     {
-        $fileInformation = $this->getFileInformation($request->path(), $request);
-        return new Response(Storage::get($fileInformation['fullPath']), 200);
+        $fileInformation = $this->getFileInformation($request);
+        return new Response(Storage::get($fileInformation['fullPath']), 200, [
+            'Content-Type' => $fileInformation['contentType']
+        ]);
     }
 
     /**
@@ -44,8 +64,7 @@ class StorageCache extends AbstractCache
             Storage::makeDirectory($this->cacheDirectory);
         }
 
-        $fileInformation = $this->getFileInformation($request->path(), $response);
-
+        $fileInformation = $this->getFileInformation($request, $response);
         if (!Storage::exists($fileInformation['dirname'])) {
             Storage::makeDirectory($fileInformation['dirname']);
         }
@@ -67,7 +86,7 @@ class StorageCache extends AbstractCache
             return false;
         }
 
-        $fileInformation = $this->getFileInformation($request->path(), $request);
+        $fileInformation = $this->getFileInformation($request);
         if (!Storage::exists($fileInformation['fullPath'])) {
             return false;
         }
@@ -99,20 +118,35 @@ class StorageCache extends AbstractCache
     /**
      * Get requested file path as array with information
      *
-     * @param string $path
-     * @param $headersBag
-     * @return string[]
+     * @param Request $request
+     * @param Response|null $response
+     * @return array
      */
-    protected function getFileInformation(string $path, $headersBag): array
+    protected function getFileInformation(Request $request, Response $response = null): array
     {
-        $pageName = basename($path); // TODO: Consider query strings
-        $fileName = (empty($pageName) ? 'qs__index__qs' : $pageName) . $this->getFileExtension($headersBag);
-        $filePath = $this->cacheDirectory . DIRECTORY_SEPARATOR . dirname($path);
+        $path = $request->path();
+        $headersBag = !empty($response) ? $response : $request;
+        $pageName = $request->getMethod() . '.' . (!empty(basename($path)) ? basename($path) : 'qs__index__qs');
+
+        if ($this->isQueryShouldCache) {
+            if (!empty($request->all())) {
+                $pageName .= '.' . urlencode(json_encode($request->all()));
+            }
+        }
+
+        [$fileExtension, $contentType] = $this->getFileExtension($headersBag);
+        $fileName = $pageName . $fileExtension;
+        $filePath = $this->cacheDirectory;
+        if ($pageName !== 'qs__index__qs') {
+            $filePath = $this->cacheDirectory . DIRECTORY_SEPARATOR . dirname($path);
+        }
 
         return [
+            'fileExtension' => $fileExtension,
+            'fileName' => $fileName,
             'dirname' => $filePath,
             'fullPath' => $filePath . DIRECTORY_SEPARATOR . $fileName,
-            'fileName' => $fileName
+            'contentType' => $contentType
         ];
     }
 
@@ -120,13 +154,13 @@ class StorageCache extends AbstractCache
      * Get file extension from headers content type
      *
      * @param Response|Request $headersBag
-     * @return string
+     * @return array
      */
-    protected function getFileExtension($headersBag = null): string
+    protected function getFileExtension($headersBag = null): array
     {
         $headers = $headersBag->headers;
         if (empty($headers) || !$headers->has('content-type')) {
-            return '.html';
+            return ['.html', 'text/html'];
         }
 
         $contentTypeBag = explode('|', $headers->get('content-type'));
@@ -134,15 +168,21 @@ class StorageCache extends AbstractCache
 
         switch ($contentType) {
             case 'application/json':
-                return '.json';
+                $fileFormat = '.json';
+                break;
             case 'application/atom+xml':
             case 'application/xml':
-                return '.xml';
+                $fileFormat = '.xml';
+                break;
             case 'text/plain':
-                return '.txt';
+                $fileFormat = '.txt';
+                break;
             case 'text/html':
             default:
-                return '.html';
+                $fileFormat = '.html';
+                break;
         }
+
+        return [$fileFormat, $contentType];
     }
 }

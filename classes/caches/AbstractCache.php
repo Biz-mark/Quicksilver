@@ -65,6 +65,7 @@ abstract class AbstractCache implements Quicksilver
     protected function isNotExcludedRoute(Request $request): bool
     {
         // TODO: Excluded routes logic
+        // TODO: Excluded routes by query parameters
         // TODO: Fire event to check if there is any excluded route
 
         // Check if we had to cache request with query strings
