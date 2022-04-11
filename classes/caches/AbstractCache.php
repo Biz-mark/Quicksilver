@@ -22,7 +22,7 @@ abstract class AbstractCache implements Quicksilver
             return false;
         }
 
-        if ($this->isResponseValid($response)) {
+        if (!$this->isResponseValid($response)) {
             return false;
         }
 
