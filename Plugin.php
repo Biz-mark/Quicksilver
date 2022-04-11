@@ -1,6 +1,6 @@
 <?php namespace BizMark\Quicksilver;
 
-use Backend;
+use Backend, Config;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
 
@@ -48,6 +48,15 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        // Set quicksilver filesystem driver
+        $quicksilverDisks = Config::get('bizmark.quicksilver::disks');
+        foreach ($quicksilverDisks as $name => $options) {
+            if (!empty($options['driver'])) {
+                Config::set('filesystems.disks.'.$name, $options);
+            }
+        }
+
+        // Prepend Quicksilver middleware
         $this->app[Kernel::class]->prependMiddleware(QuicksilverMiddleware::class);
     }
 

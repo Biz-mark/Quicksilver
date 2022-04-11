@@ -1,7 +1,8 @@
 <?php namespace BizMark\Quicksilver\Classes\Caches;
 
-use Storage;
+use Storage, Config;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\Response;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
@@ -15,11 +16,9 @@ use BizMark\Quicksilver\Models\Settings;
 class StorageCache extends AbstractCache
 {
     /**
-     * Page cache directory name inside system storage.
-     *
-     * @var string
+     * Default index file name
      */
-    private string $cacheDirectory = 'page-cache';
+    const INDEX_NAME = 'qs_index_qs';
 
     /**
      * Should we cache page with different query strings?
@@ -29,12 +28,20 @@ class StorageCache extends AbstractCache
     private bool $isQueryShouldCache;
 
     /**
+     * Default Quicksilver Storage driver
+     *
+     * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
+     */
+    private $storageDisk;
+
+    /**
      * StorageCache constructor.
      *
      * @return void
      */
     public function __construct() {
         $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
+        $this->storageDisk = Storage::disk(Config::get('bizmark.quicksilver::default'));
     }
 
     /**
@@ -42,12 +49,13 @@ class StorageCache extends AbstractCache
      *
      * @param Request $request
      * @return Response
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function get(Request $request): Response
     {
         $fileInformation = $this->getFileInformation($request);
-        return new Response(Storage::get($fileInformation['fullPath']), 200, [
-            'Content-Type' => $fileInformation['contentType']
+        return new Response($this->storageDisk->get($fileInformation['path']), 200, [
+            'Content-Type' => $fileInformation['mimeType']
         ]);
     }
 
@@ -60,16 +68,16 @@ class StorageCache extends AbstractCache
      */
     public function store(Request $request, Response $response): Quicksilver
     {
-        if (!Storage::exists($this->cacheDirectory)) {
-            Storage::makeDirectory($this->cacheDirectory);
+        if (!$this->storageDisk->exists('/')) {
+            $this->storageDisk->makeDirectory('/');
         }
 
         $fileInformation = $this->getFileInformation($request, $response);
-        if (!Storage::exists($fileInformation['dirname'])) {
-            Storage::makeDirectory($fileInformation['dirname']);
+        if (!$this->storageDisk->exists($fileInformation['directory'])) {
+            $this->storageDisk->makeDirectory($fileInformation['directory']);
         }
 
-        Storage::put($fileInformation['fullPath'], $response->getContent());
+        $this->storageDisk->put($fileInformation['path'], $response->getContent());
 
         return $this;
     }
@@ -82,12 +90,8 @@ class StorageCache extends AbstractCache
      */
     public function has(Request $request): bool
     {
-        if (!Storage::exists($this->cacheDirectory)) {
-            return false;
-        }
-
         $fileInformation = $this->getFileInformation($request);
-        if (!Storage::exists($fileInformation['fullPath'])) {
+        if (!$this->storageDisk->exists($fileInformation['path'])) {
             return false;
         }
 
@@ -102,7 +106,7 @@ class StorageCache extends AbstractCache
      */
     public function forget(string $path): bool
     {
-        return Storage::delete($path);
+        return $this->storageDisk->delete($path);
     }
 
     /**
@@ -112,7 +116,7 @@ class StorageCache extends AbstractCache
      */
     public function clear(): bool
     {
-        return Storage::delete($this->cacheDirectory);
+        return $this->storageDisk->delete($this->cacheDirectory);
     }
 
     /**
@@ -126,27 +130,33 @@ class StorageCache extends AbstractCache
     {
         $path = $request->path();
         $headersBag = !empty($response) ? $response : $request;
-        $pageName = $request->getMethod() . '.' . (!empty(basename($path)) ? basename($path) : 'qs__index__qs');
+        $pageName = $request->getMethod() . '.' . (!empty(basename($path)) ? basename($path) : self::INDEX_NAME);
 
+        // Get file extension information
+        [$fileExtension, $contentType] = $this->getFileExtension($headersBag);
+
+        // Check if we should include query strings in file name
         if ($this->isQueryShouldCache) {
             if (!empty($request->all())) {
                 $pageName .= '.' . urlencode(json_encode($request->all()));
             }
         }
 
-        [$fileExtension, $contentType] = $this->getFileExtension($headersBag);
+        // Attach extension to file name
         $fileName = $pageName . $fileExtension;
-        $filePath = $this->cacheDirectory;
-        if ($pageName !== 'qs__index__qs') {
-            $filePath = $this->cacheDirectory . DIRECTORY_SEPARATOR . dirname($path);
+
+        // File path
+        $filePath = DIRECTORY_SEPARATOR;
+        if ($pageName !== self::INDEX_NAME) {
+            $filePath = $filePath . dirname($path);
         }
 
         return [
-            'fileExtension' => $fileExtension,
-            'fileName' => $fileName,
-            'dirname' => $filePath,
-            'fullPath' => $filePath . DIRECTORY_SEPARATOR . $fileName,
-            'contentType' => $contentType
+            'name' => $fileName,
+            'extension' => $fileExtension,
+            'directory' => $filePath,
+            'mimeType' => $contentType,
+            'path' => $filePath . DIRECTORY_SEPARATOR . $fileName,
         ];
     }
 
@@ -163,26 +173,15 @@ class StorageCache extends AbstractCache
             return ['.html', 'text/html'];
         }
 
-        $contentTypeBag = explode('|', $headers->get('content-type'));
-        $contentType = array_shift($contentTypeBag);
+        $contentTypeBag = explode(';', $headers->get('content-type'));
+        $sourceContentType = array_shift($contentTypeBag);
 
-        switch ($contentType) {
-            case 'application/json':
-                $fileFormat = '.json';
-                break;
-            case 'application/atom+xml':
-            case 'application/xml':
-                $fileFormat = '.xml';
-                break;
-            case 'text/plain':
-                $fileFormat = '.txt';
-                break;
-            case 'text/html':
-            default:
-                $fileFormat = '.html';
-                break;
+        foreach (Config::get('bizmark.quicksilver::contentTypes', []) as $knownContentType => $extension) {
+            if ($knownContentType === $sourceContentType) {
+                return [$extension, $knownContentType];
+            }
         }
 
-        return [$fileFormat, $contentType];
+        return ['.html', 'text/html'];
     }
 }

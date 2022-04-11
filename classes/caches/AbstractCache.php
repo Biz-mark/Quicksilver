@@ -18,15 +18,11 @@ abstract class AbstractCache implements Quicksilver
      */
     public function validate(Request $request, Response $response): bool
     {
-        if (!$this->isNotSystemRoute($request)) {
+        if (!$this->isRequestValid($request)) {
             return false;
         }
 
-        if (!$this->isNotExcludedRoute($request)) {
-            return false;
-        }
-
-        if (!$this->isResponseChecked($response)) {
+        if ($this->isResponseValid($response)) {
             return false;
         }
 
@@ -34,13 +30,12 @@ abstract class AbstractCache implements Quicksilver
     }
 
     /**
-     * isNotSystemRoute checks if requested system route or
-     * request coming from administrator.
+     * Check that incoming request is valid to be cached.
      *
      * @param Request $request
      * @return bool
      */
-    protected function isNotSystemRoute(Request $request): bool
+    protected function isRequestValid(Request $request): bool
     {
         // Check if request coming from administrator
         if (App::runningInBackend() || BackendAuth::check()) {
@@ -52,20 +47,14 @@ abstract class AbstractCache implements Quicksilver
             return false;
         }
 
-        return true;
-    }
+        // Check if request is coming from October frontend framework
+        if ($request->hasHeader('X-OCTOBER-REQUEST-HANDLER') ||
+            $request->hasHeader('X-OCTOBER-REQUEST-PARTIAL')) {
+            return false;
+        }
 
-    /**
-     * isNotExcludedRoute checks other system points to determine
-     * if request should be cached or not.
-     *
-     * @param Request $request
-     * @return bool
-     */
-    protected function isNotExcludedRoute(Request $request): bool
-    {
         // TODO: Excluded routes logic
-        // TODO: Excluded routes by query parameters
+        // TODO: Excluded queries in specific routes logic
         // TODO: Fire event to check if there is any excluded route
 
         // Check if we had to cache request with query strings
@@ -78,14 +67,16 @@ abstract class AbstractCache implements Quicksilver
     }
 
     /**
-     * isResponseChecked checks that response is correct
-     * and valid to be cached.
+     * Check that prepared request is valid to be cached.
      *
      * @param Response $response
      * @return bool
      */
-    protected function isResponseChecked(Response $response): bool
+    protected function isResponseValid(Response $response): bool
     {
+        // TODO: Check if response has "combine" links and don't cache it
+        //
+
         // Check that response is succeeded
         if ($response->getStatusCode() !== 200) {
             return false;
