@@ -1,6 +1,5 @@
 <?php namespace BizMark\Quicksilver\Test;
 
-use Http;
 use PluginTestCase;
 use System\Classes\PluginManager;
 
@@ -16,11 +15,6 @@ class QuicksilverTest extends PluginTestCase
         // Register the plugins to make features like file configuration available
         $pluginManager->registerAll(true);
 
-    }
-
-    public function testBasicCache()
-    {
-        // TODO: Test quicksilver cache
     }
 
     public function tearDown(): void
