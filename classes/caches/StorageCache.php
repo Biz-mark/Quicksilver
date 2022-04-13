@@ -1,8 +1,8 @@
 <?php namespace BizMark\Quicksilver\Classes\Caches;
 
+use October\Rain\Argon\Argon;
 use Storage, Config;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\Response;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
@@ -19,6 +19,11 @@ class StorageCache extends AbstractCache
      * Default index file name
      */
     const INDEX_NAME = 'qs_index_qs';
+
+    /**
+     * Data folder inside disk
+     */
+    const DATA_FOLDER = 'data';
 
     /**
      * Should we cache page with different query strings?
@@ -54,8 +59,10 @@ class StorageCache extends AbstractCache
     public function get(Request $request): Response
     {
         $fileInformation = $this->getFileInformation($request);
+        $lastModified = Argon::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
         return new Response($this->storageDisk->get($fileInformation['path']), 200, [
-            'Content-Type' => $fileInformation['mimeType']
+            'Content-Type' => $fileInformation['mimeType'],
+            'Last-Modified' => $lastModified
         ]);
     }
 
@@ -68,8 +75,8 @@ class StorageCache extends AbstractCache
      */
     public function store(Request $request, Response $response): Quicksilver
     {
-        if (!$this->storageDisk->exists('/')) {
-            $this->storageDisk->makeDirectory('/');
+        if (!$this->storageDisk->exists(self::DATA_FOLDER)) {
+            $this->storageDisk->makeDirectory(self::DATA_FOLDER);
         }
 
         $fileInformation = $this->getFileInformation($request, $response);
@@ -106,7 +113,17 @@ class StorageCache extends AbstractCache
      */
     public function forget(string $path): bool
     {
-        return $this->storageDisk->delete($path);
+        if (!$this->storageDisk->delete(self::DATA_FOLDER . DIRECTORY_SEPARATOR . $path)) {
+            $files = $this->storageDisk->files(self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($path));
+            if (!empty($files) && count($files) > 0) {
+                $matchedFiles = preg_grep('*\.'.basename($path).'\.*', $files);
+                if (!empty($matchedFiles) && count($matchedFiles) > 0) {
+                    return $this->storageDisk->delete($matchedFiles);
+                }
+            }
+
+            return $this->storageDisk->deleteDirectory(self::DATA_FOLDER . DIRECTORY_SEPARATOR . $path);
+        }
     }
 
     /**
@@ -116,48 +133,7 @@ class StorageCache extends AbstractCache
      */
     public function clear(): bool
     {
-        return $this->storageDisk->delete($this->cacheDirectory);
-    }
-
-    /**
-     * Get requested file path as array with information
-     *
-     * @param Request $request
-     * @param Response|null $response
-     * @return array
-     */
-    protected function getFileInformation(Request $request, Response $response = null): array
-    {
-        $path = $request->path();
-        $headersBag = !empty($response) ? $response : $request;
-        $pageName = $request->getMethod() . '.' . (!empty(basename($path)) ? basename($path) : self::INDEX_NAME);
-
-        // Get file extension information
-        [$fileExtension, $contentType] = $this->getFileExtension($headersBag);
-
-        // Check if we should include query strings in file name
-        if ($this->isQueryShouldCache) {
-            if (!empty($request->all())) {
-                $pageName .= '.' . urlencode(json_encode($request->all()));
-            }
-        }
-
-        // Attach extension to file name
-        $fileName = $pageName . $fileExtension;
-
-        // File path
-        $filePath = DIRECTORY_SEPARATOR;
-        if ($pageName !== self::INDEX_NAME) {
-            $filePath = $filePath . dirname($path);
-        }
-
-        return [
-            'name' => $fileName,
-            'extension' => $fileExtension,
-            'directory' => $filePath,
-            'mimeType' => $contentType,
-            'path' => $filePath . DIRECTORY_SEPARATOR . $fileName,
-        ];
+        return $this->storageDisk->deleteDirectory(self::DATA_FOLDER);
     }
 
     /**
@@ -170,7 +146,7 @@ class StorageCache extends AbstractCache
     {
         $headers = $headersBag->headers;
         if (empty($headers) || !$headers->has('content-type')) {
-            return ['.html', 'text/html'];
+            return ['html', 'text/html'];
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
@@ -182,6 +158,50 @@ class StorageCache extends AbstractCache
             }
         }
 
-        return ['.html', 'text/html'];
+        return ['html', 'text/html'];
+    }
+
+    /**
+     * Get requested file path as array with information
+     *
+     * @param Request $request
+     * @param Response|null $response
+     * @return array
+     */
+    protected function getFileInformation(Request $request, Response $response = null): array
+    {
+        $requestedPath = $request->path();
+        $headersBag = !empty($response) ? $response : $request;
+        [$fileExtension, $contentType] = $this->getFileExtension($headersBag);
+
+        // Prepare file name as separate array elements
+        $pageNameElements = [
+            strtolower($request->getMethod()),
+            (!empty(basename($requestedPath)) ? basename($requestedPath) : self::INDEX_NAME)
+        ];
+
+        // Check if we should include query strings in file name
+        if ($this->isQueryShouldCache) {
+            if (!empty($request->all())) {
+                $pageNameElements[] = urlencode(json_encode($request->all()));
+            }
+        }
+
+        // Put file extension information
+        $pageNameElements[] = $fileExtension;
+
+        // Glue page elements array in to string file name.
+        $fileName = implode('.', $pageNameElements);
+
+        // File directory
+        $fileDirectory = self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($requestedPath);
+
+        return [
+            'name' => $fileName,
+            'extension' => $fileExtension,
+            'directory' => $fileDirectory,
+            'mimeType' => $contentType,
+            'path' => $fileDirectory . DIRECTORY_SEPARATOR . $fileName,
+        ];
     }
 }

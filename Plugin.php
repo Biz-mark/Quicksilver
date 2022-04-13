@@ -4,9 +4,10 @@ use Backend, Config;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
 
+use BizMark\Quicksilver\Console\Clear;
 use BizMark\Quicksilver\Models\Settings;
-use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use BizMark\Quicksilver\Classes\Caches\StorageCache;
+use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use BizMark\Quicksilver\Classes\Middlewares\QuicksilverMiddleware;
 
 /**
@@ -39,6 +40,8 @@ class Plugin extends PluginBase
     public function register()
     {
         $this->app->bind(Quicksilver::class, StorageCache::class);
+
+        $this->registerConsoleCommand('quicksilver:clear', Clear::class);
     }
 
     /**

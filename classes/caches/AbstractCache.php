@@ -7,6 +7,11 @@ use Backend\Facades\BackendAuth;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * AbstractCache class
+ * @package BizMark\Quicksilver\Classes\Caches
+ * @author Nick Khaetsky, Biz-Mark
+ */
 abstract class AbstractCache implements Quicksilver
 {
     /**
