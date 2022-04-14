@@ -30,7 +30,7 @@ return [
 
         'quicksilver' => [
             'driver' => env('QS_DISK_DRIVER', 'local'),
-            'root' => env('QS_DISK_ROOT', storage_path('page-cache'))
+            'root' => env('QS_DISK_ROOT', storage_path('quicksilver'))
         ]
 
     ],

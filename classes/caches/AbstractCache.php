@@ -1,11 +1,12 @@
 <?php namespace BizMark\Quicksilver\Classes\Caches;
 
-use App, Str;
-use BizMark\Quicksilver\Models\Settings;
+use App, Str, Event;
 use Illuminate\Http\Request;
-use Backend\Facades\BackendAuth;
-use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use Symfony\Component\HttpFoundation\Response;
+
+use Backend\Facades\BackendAuth;
+use BizMark\Quicksilver\Models\Settings;
+use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
 /**
  * AbstractCache class
@@ -14,6 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractCache implements Quicksilver
 {
+    const EVENT_IS_REQUEST_VALID = 'bizmark.quicksilver.is_request_valid';
+    const EVENT_IS_RESPONSE_VALID = 'bizmark.quicksilver.is_response_valid';
+
     /**
      * Validate if a pair of request and response should be cached.
      *
@@ -58,13 +62,22 @@ abstract class AbstractCache implements Quicksilver
             return false;
         }
 
-        // TODO: Excluded routes logic
-        // TODO: Excluded queries in specific routes logic
-        // TODO: Fire event to check if there is any excluded route
-
         // Check if we had to cache request with query strings
         $isQueryShouldCache = Settings::get('cache_query_strings', false);
         if (!empty($request->getQueryString()) && !$isQueryShouldCache) {
+            return false;
+        }
+
+        $excludedPaths = Settings::get('exclude_paths', []);
+        foreach ($excludedPaths as $path) {
+            if ($request->is($path)) {
+                return false;
+            }
+        }
+
+        // TODO: Excluded queries logic
+
+        if (!Event::fire(self::EVENT_IS_REQUEST_VALID, [$request])) {
             return false;
         }
 
@@ -79,11 +92,13 @@ abstract class AbstractCache implements Quicksilver
      */
     protected function isResponseValid(Response $response): bool
     {
-        // TODO: Check if response has "combine" links and don't cache it
-        //
-
         // Check that response is succeeded
         if ($response->getStatusCode() !== 200) {
+            return false;
+        }
+
+        // Support custom validation
+        if (!Event::fire(self::EVENT_IS_RESPONSE_VALID, [$response])) {
             return false;
         }
 
