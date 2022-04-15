@@ -15,12 +15,12 @@ tabs:
                     path:
                         label: bizmark.quicksilver::lang.field.excluded.path
 
-#        enable_query_strings:
-#            tab: bizmark.quicksilver::lang.tab.query_strings
-#            label: bizmark.quicksilver::lang.field.enable_query_strings.label
-#            comment: bizmark.quicksilver::lang.field.enable_query_strings.comment
-#            type: switch
-#            span: left
+        enable_query_strings:
+            tab: bizmark.quicksilver::lang.tab.general
+            label: bizmark.quicksilver::lang.field.enable_query_strings.label
+            comment: bizmark.quicksilver::lang.field.enable_query_strings.comment
+            type: switch
+            span: right
 
 #        query_strings_mode:
 #            tab: bizmark.quicksilver::lang.tab.query_strings
@@ -36,7 +36,7 @@ tabs:
 #                except: Except
 #                only: Only
 #                custom: Custom
-#
+
 #        _except_section:
 #            tab: bizmark.quicksilver::lang.tab.query_strings
 #            comment: bizmark.quicksilver::lang.field.except_section

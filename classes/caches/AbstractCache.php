@@ -75,9 +75,7 @@ abstract class AbstractCache implements Quicksilver
             }
         }
 
-        // TODO: Excluded queries logic
-
-        if (!Event::fire(self::EVENT_IS_REQUEST_VALID, [$request])) {
+        if (Event::fire(self::EVENT_IS_REQUEST_VALID, [$request]) === false) {
             return false;
         }
 
@@ -98,7 +96,7 @@ abstract class AbstractCache implements Quicksilver
         }
 
         // Support custom validation
-        if (!Event::fire(self::EVENT_IS_RESPONSE_VALID, [$response])) {
+        if (Event::fire(self::EVENT_IS_RESPONSE_VALID, [$response]) === false) {
             return false;
         }
 
