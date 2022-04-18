@@ -69,9 +69,11 @@ abstract class AbstractCache implements Quicksilver
         }
 
         $excludedPaths = Settings::get('exclude_paths', []);
-        foreach ($excludedPaths as $path) {
-            if ($request->is($path)) {
-                return false;
+        if (!empty($excludedPaths)) {
+            foreach ($excludedPaths as $path) {
+                if ($request->is($path)) {
+                    return false;
+                }
             }
         }
 
