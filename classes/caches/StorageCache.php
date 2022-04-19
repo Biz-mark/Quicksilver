@@ -51,6 +51,12 @@ class StorageCache extends AbstractCache
     private $storageDisk;
 
     /**
+     * Default file extension of requested path.
+     *
+     */
+    private array $defaultFileExtension = ['html', 'text/html'];
+
+    /**
      * StorageCache constructor.
      *
      * @return void
@@ -212,7 +218,7 @@ class StorageCache extends AbstractCache
     {
         $headers = $headersBag->headers;
         if (empty($headers) || !$headers->has('content-type')) {
-            return ['html', 'text/html'];
+            return $this->$defaultFileExtension;
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
@@ -224,6 +230,6 @@ class StorageCache extends AbstractCache
             }
         }
 
-        return ['html', 'text/html'];
+        return $this->$defaultFileExtension;
     }
 }
