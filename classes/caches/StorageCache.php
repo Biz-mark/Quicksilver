@@ -44,17 +44,16 @@ class StorageCache extends AbstractCache
     private bool $isQueryShouldCache;
 
     /**
+     * Default file extension of requested path.
+     */
+    private array $defaultFileExtension = ['html', 'text/html'];
+
+    /**
      * Default Quicksilver Storage driver
      *
      * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
      */
     private $storageDisk;
-
-    /**
-     * Default file extension of requested path.
-     *
-     */
-    private array $defaultFileExtension = ['html', 'text/html'];
 
     /**
      * StorageCache constructor.
@@ -218,7 +217,7 @@ class StorageCache extends AbstractCache
     {
         $headers = $headersBag->headers;
         if (empty($headers) || !$headers->has('content-type')) {
-            return $this->$defaultFileExtension;
+            return $this->defaultFileExtension;
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
@@ -230,6 +229,6 @@ class StorageCache extends AbstractCache
             }
         }
 
-        return $this->$defaultFileExtension;
+        return $this->defaultFileExtension;
     }
 }
