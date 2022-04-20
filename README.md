@@ -2,7 +2,7 @@
 
 [Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/BizMark-quicksilver)
 
-Lightning fast cache system that converts your website page to static html files.
+Lightning fast cache system that converts your website page to static .html, .xml, .json and other files.
 
 ## Installation
 

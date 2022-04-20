@@ -49,8 +49,8 @@ return [
     'contentTypes' => [
         'application/json' => 'json',
         'application/x-www-form-urlencoded' => 'json',
-        'application/atom+xml' => 'xml',
         'application/xml' => 'xml',
+        'application/atom+xml' => 'xml',
         'text/plain' => 'txt',
         'text/html' => 'html'
     ],

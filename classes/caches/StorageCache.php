@@ -44,6 +44,13 @@ class StorageCache extends AbstractCache
     private bool $isQueryShouldCache;
 
     /**
+     * Array of content types and associated file extensions
+     *
+     * @var array
+     */
+    protected array $contentTypes;
+
+    /**
      * Default Quicksilver Storage driver
      *
      * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
@@ -57,6 +64,7 @@ class StorageCache extends AbstractCache
      */
     public function __construct() {
         $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
+        $this->contentTypes = Config::get('bizmark.quicksilver::contentTypes', []);
         $this->storageDisk = Storage::disk(Config::get('bizmark.quicksilver::default'));
     }
 
@@ -168,13 +176,12 @@ class StorageCache extends AbstractCache
     protected function getFileInformation(Request $request, Response $response = null): array
     {
         $requestedPath = $request->path();
-        $headersBag = !empty($response) ? $response : $request;
-        [$fileExtension, $contentType] = $this->determineFileExtension($headersBag);
+        [$fileExtension, $contentType] = $this->determineFileExtension($request, $response);
 
         // Prepare file name as separate array elements
         $pageNameElements = [
-            strtolower($request->getMethod()),
-            (!empty(basename($requestedPath)) ? basename($requestedPath) : self::INDEX_NAME)
+            strtolower($request->getMethod()), // get, post and etc...
+            $this->determineFileName($requestedPath),
         ];
 
         // Check if we should include query strings in file name
@@ -203,24 +210,63 @@ class StorageCache extends AbstractCache
     }
 
     /**
+     * Determines requested path file name
+     *
+     * @param string $requestedPath
+     * @return string
+     */
+    protected function determineFileName(string $requestedPath): string
+    {
+        $path = basename($requestedPath);
+        if (empty($path)) {
+            return self::INDEX_NAME;
+        }
+
+        // Remove file extension from requested path.
+        foreach ($this->contentTypes as $extension) {
+            $extension = '.' . $extension;
+            $extensionLength = strlen($extension);
+            if (substr($path, -$extensionLength) === $extension) {
+                return str_replace($extension, '', $path);
+            }
+        }
+
+        return $path;
+    }
+
+    /**
      * Determines file extension from headers content-type
      *
-     * @param Response|Request $headersBag
+     * @param Request $request
+     * @param Response|null $response
      * @return array
      */
-    protected function determineFileExtension($headersBag = null): array
+    protected function determineFileExtension(Request $request, Response $response = null): array
     {
-        $headers = $headersBag->headers;
+        $path = basename($request->path());
+        $headers = !empty($response) ? $response->headers : $request->headers;
         if (empty($headers) || !$headers->has('content-type')) {
             return ['html', 'text/html'];
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
-        $sourceContentType = array_shift($contentTypeBag);
+        $headerContentType = array_shift($contentTypeBag);
 
-        foreach (Config::get('bizmark.quicksilver::contentTypes', []) as $knownContentType => $extension) {
-            if ($knownContentType === $sourceContentType) {
-                return [$extension, $knownContentType];
+        // Compare header content type to quicksilver supported mimes.
+        foreach ($this->contentTypes as $contentType => $extension) {
+            if ($contentType === $headerContentType) {
+                return [$extension, $contentType];
+            }
+        }
+
+        // If headers doesn't have content type, search for file extension in requested path
+        if (!empty($path)) {
+            foreach ($this->contentTypes as $contentType => $extension) {
+                $extensionWithDot = '.' . $extension;
+                $extensionWithDotLength = strlen($extensionWithDot);
+                if (substr($path, -$extensionWithDotLength) === $extensionWithDot) {
+                    return [$extension, $contentType];
+                }
             }
         }
 
