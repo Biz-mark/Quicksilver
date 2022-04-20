@@ -51,6 +51,11 @@ class StorageCache extends AbstractCache
     protected array $contentTypes;
 
     /**
+    * Default file extension of requested path.
+    */
+    private array $defaultFileExtension = ['html', 'text/html'];
+
+    /**
      * Default Quicksilver Storage driver
      *
      * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
@@ -246,7 +251,7 @@ class StorageCache extends AbstractCache
         $path = basename($request->path());
         $headers = !empty($response) ? $response->headers : $request->headers;
         if (empty($headers) || !$headers->has('content-type')) {
-            return ['html', 'text/html'];
+            return $this->defaultFileExtension;
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
@@ -270,6 +275,6 @@ class StorageCache extends AbstractCache
             }
         }
 
-        return ['html', 'text/html'];
+        return $this->defaultFileExtension;
     }
 }
