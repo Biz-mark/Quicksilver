@@ -174,4 +174,4 @@ Event::listen('bizmark.quicksilver.after_store', function(array $fileInformation
 
 
 ---
-© 2022, Nick Khaetsky at [Biz-Mark](https://biz-mark.ru/) under the [MIT license](https://opensource.org/licenses/MIT).
+© 2022, Nick Khaetsky at [Biz-Mark](https://biz-mark.ru/) under the [GNU General Public License v2.0](https://choosealicense.com/licenses/gpl-2.0/).
