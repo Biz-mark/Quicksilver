@@ -3,25 +3,25 @@
 return [
     'plugin' => [
         'name' => 'Quicksilver',
-        'description' => 'Lightning fast cache for your static website'
+        'description' => 'Супербыстрый кеш для вашего статичного сайта.',
     ],
     'settings' => [
-        'label' => 'Quicksilver settings',
-        'description' => 'Different settings of cache processor',
+        'label' => 'Quicksilver',
+        'description' => 'Различные настройки системы статичного кеша',
     ],
     'tab' => [
-        'general' => 'General',
-        'query_strings' => 'Query strings',
+        'general' => 'Основное',
+        'query_strings' => 'Query параметры',
     ],
     'field' => [
         'excluded' => [
-            'label' => 'Path',
-            'comment' => 'Example: acme/demo, acme/* and etc.',
-            'path' => 'Path'
+            'label' => 'Исключенные пути',
+            'comment' => 'Пример: acme/demo, acme/* and etc.',
+            'path' => 'Путь'
         ],
         'enable_query_strings' => [
-            'label' => 'Enable query strings support',
-            'comment' => 'Quicksilver will cache page with different query strings as separate entities.'
+            'label' => 'Включить кеширование вместе с query параметрами.',
+            'comment' => 'Quicksilver будет кешировать страницы с query параметрами как отдельные файлы.'
         ],
     ]
 ];
