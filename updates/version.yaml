@@ -4,9 +4,10 @@ v1.1.0: Updated configuration section in README. To actually use power of this p
 v1.1.1: Note about AJAX on cached pages in README
 v1.1.5: Ajax requests now work properly on cached pages. Place new code in your htaccess like in documentation
 v1.1.6: Fixing backend opening error
-v1.2.0: New ReportWidget for dashboard that allows quiclky purge pages cache and october cache.
+v1.2.0: New ReportWidget for dashboard that allows quickly purge pages cache and october cache.
 v1.2.1: Fixing typo in russian localization
 v1.2.2: Minor fixes
 v1.3.0: Query strings filtering for dynamic pages.
 v2.0.0: Added support for exceptions and the ability to disable some pages from the cache
 v2.1.0: Auto clearing default caches, refactoring
+v3.0.0: Complete refactoring. Read UPGRADE.md.
