@@ -14,7 +14,7 @@ Store your pages as static files and deliver it to your visitors in milliseconds
 - Optional query strings support configurable from backend.
 - Optional excluded paths configurable from backend.
 - Easy extendability by October CMS events.
-- No dependencies, works on October CMS v1.1, v2, v3.
+- No dependencies, works with October CMS v1.1, v2, v3.
 - Can be used with October CMS AJAX Framework!
 
 ## Notice
