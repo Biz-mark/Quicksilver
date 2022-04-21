@@ -1,4 +1,3 @@
-
                     GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
@@ -294,6 +293,7 @@ the "copyright" line and a pointer to where the full notice is found.
     Quicksilver - Static files cache system for October CMS.
     Copyright (C) 2022  Biz-Mark, Nick Khaetsky
 
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -327,7 +327,7 @@ You should also get your employer (if you work as a programmer) or your
 school, if any, to sign a "copyright disclaimer" for the program, if
 necessary.  Here is a sample; alter the names:
 
-  Biz-Mark, hereby disclaims all copyright interest in the program
+  Yoyodyne, Inc., hereby disclaims all copyright interest in the program
   `Gnomovision' (which makes passes at compilers) written by James Hacker.
 
   <signature of Ty Coon>, 1 April 1989
