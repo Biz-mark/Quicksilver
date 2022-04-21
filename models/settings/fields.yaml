@@ -1,163 +1,59 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
 tabs:
     fields:
-        exclude:
-            stretch: true
-            tab: bizmark.quicksilver::lang.settings.tabs.exceptions
+        exclude_paths:
+            tab: bizmark.quicksilver::lang.tab.general
+            label: bizmark.quicksilver::lang.field.excluded.label
+            commentAbove: bizmark.quicksilver::lang.field.excluded.comment
             type: repeater
-            titleFrom: url
+            span: left
             form:
                 fields:
-                    url_pattern:
-                        label: bizmark.quicksilver::lang.settings.fields.url_pattern
-                        required: true
-                        type: text
+                    path:
+                        label: bizmark.quicksilver::lang.field.excluded.path
 
-        auto_clearing:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.auto_clearing
-            comment: bizmark.quicksilver::lang.settings.fields.auto_clearing_comment
-            type: checkbox
+        enable_query_strings:
+            tab: bizmark.quicksilver::lang.tab.general
+            label: bizmark.quicksilver::lang.field.enable_query_strings.label
+            comment: bizmark.quicksilver::lang.field.enable_query_strings.comment
+            type: switch
+            span: right
 
-        blog_post:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.label
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.comment
-            type: section
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
+#        query_strings_mode:
+#            tab: bizmark.quicksilver::lang.tab.query_strings
+#            label: bizmark.quicksilver::lang.field.query_strings_mode.label
+#            type: balloon-selector
+#            default: female
+#            trigger:
+#                action: show
+#                field: enable_query_strings
+#                condition: checked
+#            options:
+#                everything: Everything
+#                except: Except
+#                only: Only
+#                custom: Custom
 
-        blog_post_pattern:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_comment
-            type: dropdown
-            cssClass: input-sidebar-control
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
+#        _except_section:
+#            tab: bizmark.quicksilver::lang.tab.query_strings
+#            comment: bizmark.quicksilver::lang.field.except_section
+#            type: section
+#            span: left
 
-        blog_post_pattern_post_slug:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_post_slug
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_post_slug_comment
-            type: text
-            required: true
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-
-        blog_post_pattern_category_slug:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_category_slug_comment
-            type: text
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-
-        blog_post_pattern_exclude_variables:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_exclude_variables
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.pattern_exclude_variable_comment
-            prompt: bizmark.quicksilver::lang.settings.fields.blog.post.exclude_variable_prompt
-            type: repeater
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-            form:
-                fields:
-                    variable:
-                        label: bizmark.quicksilver::lang.settings.fields.blog.post.exclude_variable_label
-                        span: full
-                        type: text
-
-        blog_post_extra_urls:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls
-            comment: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_comment
-            prompt: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_prompt
-            type: repeater
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-            form:
-                fields:
-                    url:
-                        label: bizmark.quicksilver::lang.settings.fields.blog.post.extra_urls_label
-                        span: full
-                        type: text
-
-
-        blog_category:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.category.label
-            comment: bizmark.quicksilver::lang.settings.fields.blog.category.comment
-            type: section
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-
-        blog_category_pattern:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern
-            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_comment
-            type: dropdown
-            cssClass: input-sidebar-control
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-
-        blog_category_pattern_slug:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_slug
-            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_slug_comment
-            type: text
-            required: true
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-
-        blog_category_pattern_exclude_variables:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_exclude_variables
-            comment: bizmark.quicksilver::lang.settings.fields.blog.category.pattern_exclude_variable_comment
-            prompt: bizmark.quicksilver::lang.settings.fields.blog.category.exclude_variable_prompt
-            type: repeater
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-            form:
-                fields:
-                    variable:
-                        label: bizmark.quicksilver::lang.settings.fields.blog.category.exclude_variable_label
-                        span: full
-                        type: text
-
-        blog_category_extra_urls:
-            tab: bizmark.quicksilver::lang.settings.tabs.clearing
-            label: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls
-            comment: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_comment
-            prompt: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_prompt
-            type: repeater
-            trigger:
-                action: show
-                field: auto_clearing
-                condition: checked
-            form:
-                fields:
-                    url:
-                        label: bizmark.quicksilver::lang.settings.fields.blog.category.extra_urls_label
-                        span: full
-                        type: text
-
+#        query_rules:
+#            tab: bizmark.quicksilver::lang.tab.query_strings
+#            label: bizmark.quicksilver::lang.field.query_rules.label
+#            commentAbove: bizmark.quicksilver::lang.field.query_rules.comment
+#            type: repeater
+#            span: left
+#            trigger:
+#                action: show
+#                field: enable_query_strings
+#                condition: checked
+#            form:
+#                fields:
+#                    path:
+#                        label: bizmark.quicksilver::lang.field.excluded.path
