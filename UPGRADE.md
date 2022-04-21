@@ -21,4 +21,4 @@ RewriteRule !^index.php index.php [L,NC]
 ## Upgrading To 3.0
 
 1. Cache folder changed from `/storage/page-cache` to `/storage/quicksilver/cache`
-2. Webseriver configuration (.htaccess or nginx) is optional now, and can be removed. Quicksilver has more features without webserver configuration.
+2. Webserver configuration (.htaccess or nginx) is optional now, and can be removed. Quicksilver has more features without webserver configuration.
