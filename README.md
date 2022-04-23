@@ -27,6 +27,11 @@ Use Quicksilver settings to set excluded paths, so pages with sensitive informat
 
 ---
 
+## Requirements
+
+- PHP 7.4 and above
+- October CMS v1.1 or v2 or v3
+
 ## Installation
 
 ```bash
