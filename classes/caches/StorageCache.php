@@ -41,19 +41,21 @@ class StorageCache extends AbstractCache
      *
      * @var bool
      */
-    private bool $isQueryShouldCache;
+    private $isQueryShouldCache;
 
     /**
      * Array of content types and associated file extensions
      *
      * @var array
      */
-    protected array $contentTypes;
+    protected $contentTypes;
 
     /**
     * Default file extension of requested path.
+     *
+     * @var array
     */
-    private array $defaultFileExtension = ['html', 'text/html'];
+    private $defaultFileExtension = ['html', 'text/html'];
 
     /**
      * Default Quicksilver Storage driver

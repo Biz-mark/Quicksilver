@@ -16,7 +16,7 @@ class QuicksilverMiddleware
      *
      * @var Quicksilver
      */
-    protected Quicksilver $cache;
+    protected $cache;
 
     /**
      * Middleware constructor.
