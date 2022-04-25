@@ -130,6 +130,10 @@ class StorageCache extends AbstractCache
      */
     public function has(Request $request): bool
     {
+        if (!$this->isQueryShouldCache && !empty($request->all())) {
+            return false;
+        }
+
         $fileInformation = $this->getFileInformation($request);
         if (!$this->storageDisk->exists($fileInformation['path'])) {
             return false;
