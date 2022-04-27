@@ -88,7 +88,8 @@ class StorageCache extends AbstractCache
         $lastModified = Argon::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
         return new Response($this->storageDisk->get($fileInformation['path']), 200, [
             'Content-Type' => $fileInformation['mimeType'],
-            'Last-Modified' => $lastModified
+            'Last-Modified' => $lastModified,
+            'Cache-Control' => 'public, max-age=7200'
         ]);
     }
 
