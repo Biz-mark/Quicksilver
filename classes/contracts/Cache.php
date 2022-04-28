@@ -49,14 +49,6 @@ interface Cache
     public function shouldCache(Request $request, Response $response): bool;
 
     /**
-     * Check if file already cached
-     * @param Request $request
-     * @return bool
-     * @throws Exception
-     */
-    public function hasCache(Request $request): bool;
-
-    /**
      * Cache the response to a file.
      *
      * @param Request $request
@@ -67,7 +59,9 @@ interface Cache
     public function cache(Request $request, Response $response): self;
 
     /**
-     * Remove the cached file for the given slug.
+     * Remove the cached files for the given slug.
+     * This will remove all variants and extensions that might exist (query strings, alternative extensions)
+     *
      *
      * @param string|null $slug
      * @return bool
