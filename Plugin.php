@@ -5,10 +5,12 @@ use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
 
 use BizMark\Quicksilver\Console\Clear;
-use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Caches\StorageCache;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use BizMark\Quicksilver\Classes\Middlewares\QuicksilverMiddleware;
+
+use BizMark\Quicksilver\Models\Settings;
+use BizMark\Quicksilver\ReportWidgets\QuicksilverClear;
 
 /**
  * Quicksilver Plugin Information File
@@ -61,6 +63,21 @@ class Plugin extends PluginBase
 
         // Prepend Quicksilver middleware
         $this->app[Kernel::class]->prependMiddleware(QuicksilverMiddleware::class);
+    }
+
+    /**
+     * registerReportWidgets registers any report widgets provided by this plugin.
+     *
+     * @return array
+     */
+    public function registerReportWidgets()
+    {
+        return [
+            QuicksilverClear::class => [
+                'label' => 'bizmark.quicksilver::lang.reportwidget.label',
+                'context' => 'dashboard'
+            ],
+        ];
     }
 
     /**

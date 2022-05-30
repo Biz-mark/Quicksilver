@@ -1,0 +1,30 @@
+<div class="report-widget">
+    <h3><?= e(trans('bizmark.quicksilver::lang.reportwidget.title')) ?></h3>
+
+    <div class="form-group">
+        <label for="quicksilverPathInput"><?= e(trans('bizmark.quicksilver::lang.reportwidget.clearing_path')) ?></label>
+        <input type="text" name="path" class="form-control" id="quicksilverPathInput">
+        <small><?= e(trans('bizmark.quicksilver::lang.reportwidget.clearing_example')) ?></small>
+    </div>
+    <div class="form-group" style="display: flex; justify-content: space-between">
+        <div class="left">
+            <button class="btn btn-primary"
+                    data-request="onClearSpecificQuicksilverPath"
+                    onclick="$(this).data('request-data', {path: $('#quicksilverPathInput').val()})">
+                <?= e(trans('bizmark.quicksilver::lang.reportwidget.clear_path')) ?>
+            </button>
+            <button class="btn btn-link"
+                    data-request="onClearQuicksilver"
+                    data-request-confirm="<?= e(trans('bizmark.quicksilver::lang.reportwidget.clear_all_pages_confirm')) ?>">
+                <?= e(trans('bizmark.quicksilver::lang.reportwidget.clear_all_pages')) ?>
+            </button>
+        </div>
+        <div class="right">
+            <button class="btn btn-danger"
+                    data-request="onClearAll"
+                    data-request-confirm="<?= e(trans('bizmark.quicksilver::lang.reportwidget.clear_all_caches_confirm')) ?>">
+                <?= e(trans('bizmark.quicksilver::lang.reportwidget.clear_all_caches')) ?>
+            </button>
+        </div>
+    </div>
+</div>
