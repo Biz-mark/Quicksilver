@@ -19,9 +19,7 @@ Store your pages as static files and deliver it to your visitors in milliseconds
 
 ## Notice
 
-> This plugin stores response of your pages as static files. You should be sure that cached pages are 
-the **same to everyone no matter in what state** (logged or not) visitor session. Otherwise, personal information
-can be leaked to every visitor.
+> This plugin stores the response of your pages as static files. You should be aware that cached pages are **the same to everyone** no matter in what state (logged or not) visitor session are. Otherwise, personal information can be seen by every visitor.
 
 Use Quicksilver settings to set excluded paths, so pages with sensitive information will not be cached.
 
