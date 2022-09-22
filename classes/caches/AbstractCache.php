@@ -1,6 +1,6 @@
 <?php namespace BizMark\Quicksilver\Classes\Caches;
 
-use App, Str, Event;
+use App, Config, Str, Event;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,6 +36,25 @@ abstract class AbstractCache implements Quicksilver
         }
 
         return true;
+    }
+
+    /**
+     * Get the list of default headers added to the response.
+     *
+     * @return array
+     */
+    public function getDefaultHeaders(): array
+    {
+        $defaultHeaders = Config::get('bizmark.quicksilver::defaultHeaders', []);
+
+        $filteredHeaders = [];
+        foreach ($defaultHeaders as $name => $value) {
+            if (!empty($value)) {
+                $filteredHeaders[$name] = $value;
+            }
+        }
+
+        return $filteredHeaders;
     }
 
     /**

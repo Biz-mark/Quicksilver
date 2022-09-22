@@ -40,7 +40,7 @@ return [
     | Quicksilver content types
     |--------------------------------------------------------------------------
     |
-    | Quicksilver able to distinguish the mime-type of pages and store
+    | Quicksilver is able to distinguish the mime-type of pages and store
     | them as separate files, based on response content-type header.
     | This config allows you to extend this behavior.
     |
@@ -53,6 +53,23 @@ return [
         'application/atom+xml' => 'xml',
         'text/plain' => 'txt',
         'text/html' => 'html'
+    ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Quicksilver headers
+    |--------------------------------------------------------------------------
+    |
+    | Customize headers added to QuickSilver response
+    |
+    | If you set any header as empty in your .env (like QS_CACHE_CONTROL=)
+    | the header won't be added to the response at all
+    |
+    */
+
+    'defaultHeaders' => [
+        'Cache-Control' => env('QS_CACHE_CONTROL', 'public, max-age=7200'),
     ],
 
 ];

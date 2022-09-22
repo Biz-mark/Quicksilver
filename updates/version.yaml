@@ -15,3 +15,4 @@ v3.0.1: Reintroduced support for PHP >=7.4
 v3.0.2: Added query params check in has() method.
 v3.0.3: Add Cache-control header to cached responses.
 v3.1.0: Added ReportWidget with convenient path clearer.
+v3.2.0: Make default headers configurable, currently only Cache-Control is supported
