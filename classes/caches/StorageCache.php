@@ -51,11 +51,11 @@ class StorageCache extends AbstractCache
     protected $contentTypes;
 
     /**
-    * Default file extension of requested path.
+     * List of default headers for the response.
      *
      * @var array
-    */
-    private $defaultFileExtension = ['html', 'text/html'];
+     */
+    protected $defaultHeaders;
 
     /**
      * Default Quicksilver Storage driver
@@ -63,6 +63,13 @@ class StorageCache extends AbstractCache
      * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
      */
     private $storageDisk;
+
+    /**
+    * Default file extension of requested path.
+     *
+     * @var array
+    */
+    private $defaultFileExtension = ['html', 'text/html'];
 
     /**
      * StorageCache constructor.
@@ -73,6 +80,9 @@ class StorageCache extends AbstractCache
         $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
         $this->contentTypes = Config::get('bizmark.quicksilver::contentTypes', []);
         $this->storageDisk = Storage::disk(Config::get('bizmark.quicksilver::default'));
+        $this->defaultHeaders = array_filter(Config::get('bizmark.quicksilver::defaultHeaders', []), function ($value) {
+            return !empty($value);
+        });
     }
 
     /**
@@ -86,11 +96,11 @@ class StorageCache extends AbstractCache
     {
         $fileInformation = $this->getFileInformation($request);
         $lastModified = Argon::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
-        return new Response($this->storageDisk->get($fileInformation['path']), 200, [
+
+        return new Response($this->storageDisk->get($fileInformation['path']), 200, array_merge($this->defaultHeaders, [
             'Content-Type' => $fileInformation['mimeType'],
-            'Last-Modified' => $lastModified,
-            'Cache-Control' => 'public, max-age=7200'
-        ]);
+            'Last-Modified' => $lastModified
+        ]));
     }
 
     /**
