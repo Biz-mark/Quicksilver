@@ -69,7 +69,7 @@ return [
     */
 
     'defaultHeaders' => [
-        'Cache-Control' => env('QS_CACHE_CONTROL', 'public, max-age=7200'),
+        'Cache-Control' => env('QS_CACHE_CONTROL', 'public, max-age=7200')
     ],
 
 ];

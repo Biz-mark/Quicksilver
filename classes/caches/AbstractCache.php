@@ -39,25 +39,6 @@ abstract class AbstractCache implements Quicksilver
     }
 
     /**
-     * Get the list of default headers added to the response.
-     *
-     * @return array
-     */
-    public function getDefaultHeaders(): array
-    {
-        $defaultHeaders = Config::get('bizmark.quicksilver::defaultHeaders', []);
-
-        $filteredHeaders = [];
-        foreach ($defaultHeaders as $name => $value) {
-            if (!empty($value)) {
-                $filteredHeaders[$name] = $value;
-            }
-        }
-
-        return $filteredHeaders;
-    }
-
-    /**
      * Check that incoming request is valid to be cached.
      *
      * @param Request $request
