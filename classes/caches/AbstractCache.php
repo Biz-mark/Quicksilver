@@ -1,6 +1,6 @@
 <?php namespace BizMark\Quicksilver\Classes\Caches;
 
-use App, Config, Str, Event;
+use App, Str, Event;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
