@@ -2,9 +2,9 @@
 
 use App, Str, Event;
 use Illuminate\Http\Request;
+use Backend\Facades\BackendAuth;
 use Symfony\Component\HttpFoundation\Response;
 
-use Backend\Facades\BackendAuth;
 use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
@@ -15,7 +15,14 @@ use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
  */
 abstract class AbstractCache implements Quicksilver
 {
+    /**
+     * Event name called before request is validated
+     */
     const EVENT_IS_REQUEST_VALID = 'bizmark.quicksilver.is_request_valid';
+
+    /**
+     * Event name called before response is validated
+     */
     const EVENT_IS_RESPONSE_VALID = 'bizmark.quicksilver.is_response_valid';
 
     /**
@@ -77,6 +84,7 @@ abstract class AbstractCache implements Quicksilver
             }
         }
 
+        // Support custom validation
         if (Event::fire(self::EVENT_IS_REQUEST_VALID, [$request]) === false) {
             return false;
         }

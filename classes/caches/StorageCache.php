@@ -65,10 +65,10 @@ class StorageCache extends AbstractCache
     private $storageDisk;
 
     /**
-    * Default file extension of requested path.
+     * Default file extension of requested path.
      *
      * @var array
-    */
+     */
     private $defaultFileExtension = ['html', 'text/html'];
 
     /**
@@ -76,7 +76,8 @@ class StorageCache extends AbstractCache
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
         $this->contentTypes = Config::get('bizmark.quicksilver::contentTypes', []);
         $this->storageDisk = Storage::disk(Config::get('bizmark.quicksilver::default'));
@@ -169,7 +170,7 @@ class StorageCache extends AbstractCache
         // If there is no trailing slash, we search for files.
         $files = $this->storageDisk->files(self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($path));
         if (!empty($files) && count($files) > 0) {
-            $matchedFiles = preg_grep('*\.'.basename($path).'\.*', $files);
+            $matchedFiles = preg_grep('*\.' . basename($path) . '\.*', $files);
             if (!empty($matchedFiles) && count($matchedFiles) > 0) {
                 return $this->storageDisk->delete($matchedFiles);
             }

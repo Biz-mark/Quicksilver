@@ -23,7 +23,7 @@ class Clear extends Command
     protected $description = 'Clearing of quicksilver storage.';
 
     /**
-     * handle executes the console command
+     * Handle executes the console command
      *
      * @param Quicksilver $quicksilver
      * @return void

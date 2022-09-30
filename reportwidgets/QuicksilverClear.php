@@ -4,33 +4,56 @@ use Artisan, Flash, Input, Lang;
 use Backend\Classes\ReportWidgetBase;
 
 /**
- * Quicksilver Plugin Information File
+ * Quicksilver cleaner reportwidget
  * @package BizMark\Quicksilver\ReportWidgets
  * @author Nick Khaetsky, Biz-Mark
  */
 class QuicksilverClear extends ReportWidgetBase
 {
-    public function render()
+    /**
+     * Render widget
+     *
+     * @return mixed
+     * @throws \SystemException
+     */
+    public function render(): mixed
     {
         return $this->makePartial('widget');
     }
 
-    public function onClearSpecificQuicksilverPath()
+    /**
+     * Clear specific quicksilver path provided by user
+     *
+     * @return void
+     */
+    public function onClearSpecificQuicksilverPath(): void
     {
         $specificPath = Input::get('path');
         Artisan::call('quicksilver:clear', ['path' => $specificPath]);
 
-        Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_specific', ['path' => $specificPath]));
+        Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_specific', [
+            'path' => $specificPath
+        ]));
     }
 
-    public function onClearQuicksilver()
+    /**
+     * Clear all quicksilver cache
+     *
+     * @return void
+     */
+    public function onClearQuicksilver(): void
     {
         Artisan::call('quicksilver:clear');
 
         Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_all_paths'));
     }
 
-    public function onClearAll()
+    /**
+     * Clear all quicksilver cache and system cache
+     *
+     * @return void
+     */
+    public function onClearAll(): void
     {
         Artisan::call('cache:clear');
         Artisan::call('quicksilver:clear');

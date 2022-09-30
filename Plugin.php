@@ -1,15 +1,14 @@
 <?php namespace BizMark\Quicksilver;
 
-use Backend, Config;
+use Config;
 use System\Classes\PluginBase;
 use Illuminate\Contracts\Http\Kernel;
 
 use BizMark\Quicksilver\Console\Clear;
+use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Caches\StorageCache;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 use BizMark\Quicksilver\Classes\Middlewares\QuicksilverMiddleware;
-
-use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\ReportWidgets\QuicksilverClear;
 
 /**
@@ -57,7 +56,7 @@ class Plugin extends PluginBase
         $quicksilverDisks = Config::get('bizmark.quicksilver::disks');
         foreach ($quicksilverDisks as $name => $options) {
             if (!empty($options['driver'])) {
-                Config::set('filesystems.disks.'.$name, $options);
+                Config::set('filesystems.disks.' . $name, $options);
             }
         }
 
