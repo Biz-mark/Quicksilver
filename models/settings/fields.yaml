@@ -15,7 +15,7 @@ tabs:
                     path:
                         label: bizmark.quicksilver::lang.field.excluded.path
 
-        enable_query_strings:
+        cache_query_strings:
             tab: bizmark.quicksilver::lang.tab.general
             label: bizmark.quicksilver::lang.field.enable_query_strings.label
             comment: bizmark.quicksilver::lang.field.enable_query_strings.comment
