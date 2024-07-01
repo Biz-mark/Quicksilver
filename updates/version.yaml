@@ -17,3 +17,4 @@ v3.0.3: Add Cache-control header to cached responses.
 v3.1.0: Added ReportWidget with convenient path clearer.
 v3.2.0: Make default headers configurable.
 v3.2.1: Small styling changes.
+v3.2.2: Fixed wrong settings code for caching query strings
