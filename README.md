@@ -1,8 +1,3 @@
-REPOSITORY MOVED TO GITLAB https://gitlab.biz-mark.ru/free-plugins/Quicksilver
-
-
-
-
 # OctoberCMS lightning fast static files cache system
 
 [Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/BizMark-quicksilver)
