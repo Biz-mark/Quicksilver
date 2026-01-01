@@ -5,7 +5,7 @@ use Storage, Config, Event;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use October\Rain\Argon\Argon;
+use October\Rain\Support\Date;
 use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
@@ -96,7 +96,7 @@ class StorageCache extends AbstractCache
     public function get(Request $request): Response
     {
         $fileInformation = $this->getFileInformation($request);
-        $lastModified = Argon::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
+        $lastModified = Date::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
 
         return new Response($this->storageDisk->get($fileInformation['path']), 200, array_merge($this->defaultHeaders, [
             'Content-Type' => $fileInformation['mimeType'],
