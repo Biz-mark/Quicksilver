@@ -4,14 +4,17 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Quicksilver interface
+ * Quicksilver interface.
+ *
+ * Defines the contract for cache storage implementations.
+ *
  * @package BizMark\Quicksilver\Classes\Contracts
  * @author Nick Khaetsky, Biz-Mark
  */
 interface Quicksilver
 {
     /**
-     * Check if file already cached
+     * Determine whether a cached version of the request exists.
      *
      * @param Request $request
      * @return bool
@@ -19,25 +22,25 @@ interface Quicksilver
     public function has(Request $request): bool;
 
     /**
-     * Determines whether the given request/response pair should be cached.
+     * Determine whether the given request and response are eligible for caching.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
      * @return bool
      */
     public function validate(Request $request, Response $response): bool;
 
     /**
-     * Cache the response to a file.
+     * Store the response in the cache.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
      * @return self
      */
     public function store(Request $request, Response $response): self;
 
     /**
-     * Get response from cache
+     * Retrieve a cached response for the given request.
      *
      * @param Request $request
      * @return Response
@@ -45,7 +48,7 @@ interface Quicksilver
     public function get(Request $request): Response;
 
     /**
-     * Remove the cached file for the given slug.
+     * Remove a cached entry by its path.
      *
      * @param string $path
      * @return bool
@@ -53,7 +56,7 @@ interface Quicksilver
     public function forget(string $path): bool;
 
     /**
-     * Fully clear the cache directory.
+     * Clear the entire cache storage.
      *
      * @return bool
      */
