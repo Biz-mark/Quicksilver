@@ -1,49 +1,54 @@
-# OctoberCMS lightning fast static files cache system
+# OctoberCMS Lightning-Fast Static File Cache System
 
-[Quicksilver in OctoberCMS Marketplace](https://octobercms.com/plugin/BizMark-quicksilver)
+[Quicksilver on the OctoberCMS Marketplace](https://octobercms.com/plugin/BizMark-quicksilver)
 
-Lightning fast cache system that converts your website page to static .html, .xml, .json and other files.
+Quicksilver is a lightning-fast caching system that converts your website pages into static `.html`, `.xml`, `.json`, and other file formats.
 
-Store your pages as static files and deliver it to your visitors in milliseconds!
+By storing pages as static files, Quicksilver delivers content to your visitors in milliseconds.
+
+---
 
 ## Features
 
-- No additional configuration needed! Easy to use on shared hosting! Install in one click.
-- Smart content type determination by headers or file extension, with ability to be extended. 
-- Full Storage service support. You can configure custom cache disk via config.
-- Optional query strings support configurable from backend.
-- Optional excluded paths configurable from backend.
-- Easy extendability by October CMS events.
-- No dependencies, works with October CMS v1.1, v2, v3.
-- Can be used with October CMS AJAX Framework!
+- No additional configuration required — easy to use even on shared hosting. Install with one click.
+- Intelligent content type detection based on response headers or file extensions, with extensibility support.
+- Full support for Laravel’s Storage service, including custom cache disks.
+- Optional query string caching, configurable from the backend.
+- Optional excluded paths, configurable from the backend.
+- Easily extendable via October CMS events.
+- No external dependencies; compatible with October CMS v1.1, v2, and v3.
+- Can be used together with the October CMS AJAX framework.
 
-## Notice
+---
 
-> This plugin stores the response of your pages as static files. You should be aware that cached pages are **the same to everyone** no matter in what state (logged or not) visitor session are. Otherwise, personal information can be seen by every visitor.
+## Important Notice
 
-Use Quicksilver settings to set excluded paths, so pages with sensitive information will not be cached.
+> This plugin stores page responses as static files. Cached pages are **identical for all visitors**, regardless of whether a user is logged in or not.  
+> As a result, sensitive or personalized information may be exposed if such pages are cached.
+
+Use the Quicksilver settings to define excluded paths so that pages containing sensitive data are not cached.
 
 ---
 
 ## Requirements
 
-- PHP 7.4 and above
-- October CMS v1.1 or v2 or v3
+- PHP 7.4 or higher
+- October CMS v1.1, v2, or v3
+
+---
 
 ## Installation
-
 ```bash
 php artisan plugin:install BizMark.Quicksilver
 ```
 
 ## Additional configuration
 
-Quicksilver can be configured additionally so webserver can check for cached pages by itself, 
-completely ignoring application booting.
+Quicksilver can be configured so that the web server serves cached pages directly, completely bypassing application bootstrapping.
 
 ### Apache
 
-1. Open `.htaccess` and add the following before `Standard routes` section
+1. Open your `.htaccess` file and add the following rules before the `Standard routes` section:
 
     ```apacheconfig
     ##
@@ -58,12 +63,12 @@ completely ignoring application booting.
     RewriteRule !^index.php index.php [L,NC]
     ```
 
-2. Comment out following line in `White listed folders` section.
+2. Comment out the following line in the `White listed folders` section:
     ```
     RewriteRule !^index.php index.php [L,NC]
     ```
 
-3. **Be sure that plugin can create/write/read "storage/quicksilver/cache" folder in your storage path.**
+3. **Ensure the plugin has read/write permissions for the `storage/quicksilver/cache` directory.**
 
 ### Nginx
 
@@ -77,7 +82,7 @@ location / {
 }
 ```
 
-If you need to send ajax requests to cached url, you should use this construction
+If you need to send AJAX requests to cached URLs, use the following configuration:
 
 ```nginx
 location / {
@@ -92,7 +97,7 @@ location / {
 
 ### Ignoring the cached files
 
-Don't forget to put Quicksilver folder in your `.gitignore`.
+Do not forget to exclude the Quicksilver cache directory from version control by adding it to your `.gitignore` file:
 
 ```
 /storage/quicksilver
@@ -101,19 +106,21 @@ Don't forget to put Quicksilver folder in your `.gitignore`.
 ## Clearing the cache
 
 
+Clear the entire Quicksilver cache:
 
 ```
 php artisan quicksilver:clear
 ```
 
-Or to clear specific route
+Clear the cache for a specific path:
 ```
 php artisan quicksilver:clear {path}
 ```
 
 ## Events
 
-These events called when request and response are validated if returned true, Quicksilver will continue validation.
+These events are triggered during request and response validation.
+If an event listener returns `false`, caching will be aborted.
 
 - `bizmark.quicksilver.is_request_valid` - bool
 
@@ -143,7 +150,7 @@ Event::listen('bizmark.quicksilver.is_response_valid', function(\Symfony\Compone
 
 ```
 
-These events called before and after storing cached page, so you can modify contents of it.
+These events are triggered before and after a cached page is stored, allowing you to modify its contents.
 
 - `bizmark.quicksilver.before_store` - void
 ```php
@@ -177,4 +184,4 @@ Event::listen('bizmark.quicksilver.after_store', function(array $fileInformation
 
 
 ---
-© 2022, Nick Khaetsky at [Biz-Mark](https://biz-mark.ru/) under the [GNU General Public License v2.0](https://choosealicense.com/licenses/gpl-2.0/).
+© 2026, Nick Khaetsky at [Biz-Mark](https://biz-mark.ru/) under the [GNU General Public License v2.0](https://choosealicense.com/licenses/gpl-2.0/).
