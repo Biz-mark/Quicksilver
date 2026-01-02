@@ -18,3 +18,4 @@ v3.1.0: Added ReportWidget with convenient path clearer.
 v3.2.0: Make default headers configurable.
 v3.2.1: Small styling changes.
 v3.2.2: Fixed wrong settings code for caching query strings
+v3.3.0: Compatibility with OCMS v4
