@@ -5,21 +5,24 @@ use Illuminate\Http\Request;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
 /**
- * CacheMiddleware middleware
+ * QuicksilverMiddleware class.
+ *
+ * Handles HTTP response caching using the Quicksilver cache layer.
+ *
  * @package BizMark\Quicksilver\Classes\Middlewares
  * @author Nick Khaetsky, Biz-Mark
  */
 class QuicksilverMiddleware
 {
     /**
-     * The Quicksilver cache interface instance.
+     * Quicksilver cache implementation.
      *
      * @var Quicksilver
      */
     protected $cache;
 
     /**
-     * Middleware constructor.
+     * Create a new middleware instance.
      *
      * @param Quicksilver $cache
      */
@@ -29,7 +32,7 @@ class QuicksilverMiddleware
     }
 
     /**
-     * Handle an incoming request.
+     * Process an incoming HTTP request.
      *
      * @param Request $request
      * @param Closure $next
@@ -37,12 +40,15 @@ class QuicksilverMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        // Return cached response if it exists
         if ($this->cache->has($request)) {
             return $this->cache->get($request);
         }
 
+        // Handle the request and obtain the response
         $response = $next($request);
 
+        // Store the response in cache if it is eligible
         if ($this->cache->validate($request, $response)) {
             $this->cache->store($request, $response);
         }
