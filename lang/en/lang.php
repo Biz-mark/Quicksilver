@@ -3,39 +3,47 @@
 return [
     'plugin' => [
         'name' => 'Quicksilver',
-        'description' => 'Lightning fast cache for your static website'
+        'description' => 'Lightning-fast caching for static websites',
     ],
+
     'settings' => [
-        'label' => 'Quicksilver settings',
-        'description' => 'Different settings of cache processor',
+        'label' => 'Quicksilver Settings',
+        'description' => 'Configuration options for the cache processor',
     ],
+
     'tab' => [
         'general' => 'General',
-        'query_strings' => 'Query strings',
+        'query_strings' => 'Query Strings',
     ],
+
     'field' => [
         'excluded' => [
-            'label' => 'Excluded paths',
-            'comment' => 'Example: acme/demo, acme/* and etc.',
-            'path' => 'Path'
+            'label' => 'Excluded Paths',
+            'comment' => 'Examples: acme/demo, acme/*, etc.',
+            'path' => 'Path',
         ],
+
         'enable_query_strings' => [
-            'label' => 'Enable query strings support',
-            'comment' => 'Quicksilver will cache page with different query strings as separate entities.'
+            'label' => 'Enable Query String Support',
+            'comment' => 'Quicksilver will cache pages with different query strings as separate entries.',
         ],
     ],
+
     'reportwidget' => [
-        'label' => 'Quicksilver cache clearer',
-        'clear_specific' => 'Cache of :path successfully cleared.',
-        'clear_all_paths' => 'Cache of all pages successfully cleared.',
-        'clear_all' => 'System cache and all pages successfully cleared.',
-        'title' => 'Quicksilver cache',
+        'label' => 'Quicksilver Cache Cleaner',
+        'title' => 'Quicksilver Cache',
+
+        'clear_specific' => 'Cache for :path has been successfully cleared.',
+        'clear_all_paths' => 'Cache for all pages has been successfully cleared.',
+        'clear_all' => 'System cache and all pages have been successfully cleared.',
+
         'clearing_path' => 'Path to clear',
-        'clearing_example' => 'Example: /path, /path/something, /path/*',
-        'clear_path' => 'Clear pages cache at specified path',
-        'clear_all_pages' => 'Clear all pages cache',
+        'clearing_example' => 'Example: /path, /path/subpath, /path/*',
+
+        'clear_path' => 'Clear cached pages at the specified path',
+        'clear_all_pages' => 'Clear cache for all pages',
         'clear_all_pages_confirm' => 'Are you sure you want to delete all cached pages?',
         'clear_all_caches' => 'Clear system cache and all cached pages',
         'clear_all_caches_confirm' => 'Are you sure you want to clear all caches?',
-    ]
+    ],
 ];
