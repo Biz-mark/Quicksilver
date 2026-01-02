@@ -4,12 +4,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Quicksilver disk
+    | Default Quicksilver Disk
     |--------------------------------------------------------------------------
     |
-    | Specifies the default storage disk used for storing page caches
+    | Specifies the default storage disk used to store cached pages.
     |
-    | Supported disks: "quicksilver", "local" and etc.
+    | Supported disks include "quicksilver", "local", and any other
+    | disks defined in this configuration.
     |
     */
 
@@ -17,12 +18,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Quicksilver storage disks
+    | Quicksilver Storage Disks
     |--------------------------------------------------------------------------
     |
-    | As for default disk, quicksilver utilizes page-cache folder inside
-    | storage directory. You can add any other disks that you can
-    | use as a cache storage.
+    | The default Quicksilver disk uses a dedicated cache directory
+    | inside the application's storage folder.
+    |
+    | You may define additional disks here to use as cache storage.
     |
     */
 
@@ -30,46 +32,46 @@ return [
 
         'quicksilver' => [
             'driver' => env('QS_DISK_DRIVER', 'local'),
-            'root' => env('QS_DISK_ROOT', storage_path('quicksilver'))
-        ]
+            'root'   => env('QS_DISK_ROOT', storage_path('quicksilver')),
+        ],
 
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Quicksilver content types
+    | Quicksilver Content Types
     |--------------------------------------------------------------------------
     |
-    | Quicksilver is able to distinguish the mime-type of pages and store
-    | them as separate files, based on response content-type header.
-    | This config allows you to extend this behavior.
+    | Quicksilver can detect the MIME type of responses and store cached
+    | pages using different file extensions based on the Content-Type header.
+    |
+    | This configuration allows you to extend or override this behavior.
     |
     */
 
     'contentTypes' => [
-        'application/json' => 'json',
+        'application/json'                  => 'json',
         'application/x-www-form-urlencoded' => 'json',
-        'application/xml' => 'xml',
-        'application/atom+xml' => 'xml',
-        'text/plain' => 'txt',
-        'text/html' => 'html'
+        'application/xml'                   => 'xml',
+        'application/atom+xml'              => 'xml',
+        'text/plain'                        => 'txt',
+        'text/html'                         => 'html',
     ],
-
 
     /*
     |--------------------------------------------------------------------------
-    | Default Quicksilver headers
+    | Default Quicksilver Headers
     |--------------------------------------------------------------------------
     |
-    | Customize headers added to QuickSilver response
+    | Defines additional headers added to cached responses.
     |
-    | If you set any header as empty in your .env (like QS_CACHE_CONTROL=)
-    | the header won't be added to the response at all
+    | If a header is set to an empty value in the environment file
+    | (for example: QS_CACHE_CONTROL=), it will not be added at all.
     |
     */
 
     'defaultHeaders' => [
-        'Cache-Control' => env('QS_CACHE_CONTROL', 'public, max-age=7200')
+        'Cache-Control' => env('QS_CACHE_CONTROL', 'public, max-age=7200'),
     ],
 
 ];
