@@ -1,25 +1,27 @@
-# Upgrade guide
+# Upgrade Guide
 
-- [Upgrading to 2.1.1 from 3.0](#upgrade-3.0)
-- [Upgrading to 1.3 from 1.2.2](#upgrade-1.3)
+- [Upgrading to 3.0 from earlier versions](#upgrade-3-0)
+- [Upgrading to 1.3 from 1.2.2](#upgrade-1-3)
 
-<a name="upgrade-3.0"></a>
+<a name="upgrade-3-0"></a>
 
-## Upgrading To 3.0
+## Upgrading to 3.0
 
-1. Cache folder changed from `/storage/page-cache` to `/storage/quicksilver/cache`
-2. Webserver configuration (.htaccess or nginx) is optional now, and can be removed. Quicksilver has more features without webserver configuration.
+1. The cache directory has changed from `/storage/page-cache` to `/storage/quicksilver/cache`.
+2. Web server configuration (`.htaccess` or Nginx) is now optional and can be safely removed.
+   Quicksilver provides additional features when running without direct web server rules.
 
+---
 
-<a name="upgrade-1.3"></a>
+<a name="upgrade-1-3"></a>
 
-## Upgrading To 1.3
+## Upgrading to 1.3
 
-Open your .htaccess file, and replace old section of "serving cache rules" with new from documentation
+Open your `.htaccess` file and replace the old **cache serving rules** section with the updated version from the documentation.
 
-If you edited this section, or don't want to replace whole section, you need to add this two lines right after section headline.
+If you have customized this section or prefer not to replace it entirely, add the following two lines **immediately after the section header**:
 
-```apacheconfig
+```apache
 RewriteCond %{QUERY_STRING} ^(.)
 RewriteRule !^index.php index.php [L,NC]
 ```
