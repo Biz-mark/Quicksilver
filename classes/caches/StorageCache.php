@@ -10,62 +10,65 @@ use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
 /**
- * StorageCache class
+ * StorageCache class.
+ *
+ * Handles filesystem-based page caching.
+ *
  * @package BizMark\Quicksilver\Classes\Caches
  * @author Nick Khaetsky, Biz-Mark
  */
 class StorageCache extends AbstractCache
 {
     /**
-     * Event name called before file stored in cache.
+     * Event name triggered before a file is stored in cache.
      */
     const EVENT_BEFORE_STORE = 'bizmark.quicksilver.before_store';
 
     /**
-     * Event name called after file stored in cache.
+     * Event name triggered after a file is stored in cache.
      */
     const EVENT_AFTER_STORE = 'bizmark.quicksilver.after_store';
 
     /**
-     * Default index file name
+     * Default index file name.
      */
     const INDEX_NAME = 'qs_index_qs';
 
     /**
-     * Data folder inside disk
+     * Cache data directory inside the storage disk.
      */
     const DATA_FOLDER = 'cache';
 
     /**
-     * Should we cache page with different query strings?
+     * Indicates whether pages with query strings should be cached.
      *
      * @var bool
      */
     private $isQueryShouldCache;
 
     /**
-     * Array of content types and associated file extensions
+     * Supported content types mapped to file extensions.
      *
      * @var array
      */
     protected $contentTypes;
 
     /**
-     * List of default headers for the response.
+     * Default response headers.
      *
      * @var array
      */
     protected $defaultHeaders;
 
     /**
-     * Default Quicksilver Storage driver
+     * Quicksilver storage disk instance.
      *
      * @var \Illuminate\Contracts\Filesystem\Filesystem|Storage
      */
     private $storageDisk;
 
     /**
-     * Default file extension of requested path.
+     * Default file extension and MIME type.
      *
      * @var array
      */
@@ -73,21 +76,22 @@ class StorageCache extends AbstractCache
 
     /**
      * StorageCache constructor.
-     *
-     * @return void
      */
     public function __construct()
     {
         $this->isQueryShouldCache = Settings::get('cache_query_strings', false);
         $this->contentTypes = Config::get('bizmark.quicksilver::contentTypes', []);
         $this->storageDisk = Storage::disk(Config::get('bizmark.quicksilver::default'));
-        $this->defaultHeaders = array_filter(Config::get('bizmark.quicksilver::defaultHeaders', []), function ($value) {
-            return !empty($value);
-        });
+        $this->defaultHeaders = array_filter(
+            Config::get('bizmark.quicksilver::defaultHeaders', []),
+            function ($value) {
+                return !empty($value);
+            }
+        );
     }
 
     /**
-     * Get requested page from cache
+     * Retrieve a cached response from storage.
      *
      * @param Request $request
      * @return Response
@@ -96,18 +100,24 @@ class StorageCache extends AbstractCache
     public function get(Request $request): Response
     {
         $fileInformation = $this->getFileInformation($request);
-        $lastModified = Date::parse($this->storageDisk->lastModified($fileInformation['path']))->toRfc7231String();
+        $lastModified = Date::parse(
+            $this->storageDisk->lastModified($fileInformation['path'])
+        )->toRfc7231String();
 
-        return new Response($this->storageDisk->get($fileInformation['path']), 200, array_merge($this->defaultHeaders, [
-            'Content-Type' => $fileInformation['mimeType'],
-            'Last-Modified' => $lastModified
-        ]));
+        return new Response(
+            $this->storageDisk->get($fileInformation['path']),
+            200,
+            array_merge($this->defaultHeaders, [
+                'Content-Type'  => $fileInformation['mimeType'],
+                'Last-Modified' => $lastModified,
+            ])
+        );
     }
 
     /**
-     * Store response to storage cache
+     * Store a response in the cache storage.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
      * @return Quicksilver
      */
@@ -121,13 +131,16 @@ class StorageCache extends AbstractCache
 
         Event::fire(self::EVENT_BEFORE_STORE, [$fileInformation]);
 
-        // Check that directory for file is created.
+        // Ensure the target directory exists
         if (!$this->storageDisk->exists($fileInformation['directory'])) {
             $this->storageDisk->makeDirectory($fileInformation['directory']);
         }
 
-        // Store file inside quicksilver cache storage.
-        $this->storageDisk->put($fileInformation['path'], $response->getContent());
+        // Store the response content in the cache
+        $this->storageDisk->put(
+            $fileInformation['path'],
+            $response->getContent()
+        );
 
         Event::fire(self::EVENT_AFTER_STORE, [$fileInformation]);
 
@@ -135,7 +148,7 @@ class StorageCache extends AbstractCache
     }
 
     /**
-     * Check if storage has request cached in storage
+     * Determine whether a cached version of the request exists.
      *
      * @param Request $request
      * @return bool
@@ -147,31 +160,33 @@ class StorageCache extends AbstractCache
         }
 
         $fileInformation = $this->getFileInformation($request);
-        if (!$this->storageDisk->exists($fileInformation['path'])) {
-            return false;
-        }
 
-        return true;
+        return $this->storageDisk->exists($fileInformation['path']);
     }
 
     /**
-     * Remove specific path from storage cache.
+     * Remove a specific path from the cache storage.
      *
      * @param string $path
      * @return bool
      */
     public function forget(string $path): bool
     {
-        // If requested path has trailing slash, quicksilver clears' directory.
+        // If the path ends with a slash, remove the entire directory
         if (substr($path, -1) === '/') {
-            return $this->storageDisk->deleteDirectory(self::DATA_FOLDER . DIRECTORY_SEPARATOR . $path);
+            return $this->storageDisk->deleteDirectory(
+                self::DATA_FOLDER . DIRECTORY_SEPARATOR . $path
+            );
         }
 
-        // If there is no trailing slash, we search for files.
-        $files = $this->storageDisk->files(self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($path));
-        if (!empty($files) && count($files) > 0) {
+        // Otherwise, search for matching cached files
+        $files = $this->storageDisk->files(
+            self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($path)
+        );
+
+        if (!empty($files)) {
             $matchedFiles = preg_grep('*\.' . basename($path) . '\.*', $files);
-            if (!empty($matchedFiles) && count($matchedFiles) > 0) {
+            if (!empty($matchedFiles)) {
                 return $this->storageDisk->delete($matchedFiles);
             }
         }
@@ -180,7 +195,7 @@ class StorageCache extends AbstractCache
     }
 
     /**
-     * Clear whole storage page cache
+     * Clear the entire storage cache.
      *
      * @return bool
      */
@@ -190,9 +205,9 @@ class StorageCache extends AbstractCache
     }
 
     /**
-     * Get requested file path as array with information
+     * Build file metadata for the requested resource.
      *
-     * @param Request $request
+     * @param Request       $request
      * @param Response|null $response
      * @return array
      */
@@ -201,39 +216,37 @@ class StorageCache extends AbstractCache
         $requestedPath = $request->path();
         [$fileExtension, $contentType] = $this->determineFileExtension($request, $response);
 
-        // Prepare file name as separate array elements
+        // Prepare filename components
         $pageNameElements = [
-            strtolower($request->getMethod()), // get, post and etc...
+            strtolower($request->getMethod()), // get, post, etc.
             $this->determineFileName($requestedPath),
         ];
 
-        // Check if we should include query strings in file name
-        if ($this->isQueryShouldCache) {
-            if (!empty($request->all())) {
-                $pageNameElements[] = urlencode(json_encode($request->all()));
-            }
+        // Append query string data if enabled
+        if ($this->isQueryShouldCache && !empty($request->all())) {
+            $pageNameElements[] = urlencode(json_encode($request->all()));
         }
 
-        // Put file extension information
+        // Append file extension
         $pageNameElements[] = $fileExtension;
 
-        // Glue page elements array in to string file name.
+        // Build final filename
         $fileName = implode('.', $pageNameElements);
 
-        // File directory
+        // Resolve directory path
         $fileDirectory = self::DATA_FOLDER . DIRECTORY_SEPARATOR . dirname($requestedPath);
 
         return [
-            'name' => $fileName,
+            'name'      => $fileName,
             'extension' => $fileExtension,
             'directory' => $fileDirectory,
-            'mimeType' => $contentType,
-            'path' => $fileDirectory . DIRECTORY_SEPARATOR . $fileName,
+            'mimeType'  => $contentType,
+            'path'      => $fileDirectory . DIRECTORY_SEPARATOR . $fileName,
         ];
     }
 
     /**
-     * Determines requested path file name
+     * Determine the base file name from the requested path.
      *
      * @param string $requestedPath
      * @return string
@@ -241,15 +254,15 @@ class StorageCache extends AbstractCache
     protected function determineFileName(string $requestedPath): string
     {
         $path = basename($requestedPath);
+
         if (empty($path)) {
             return self::INDEX_NAME;
         }
 
-        // Remove file extension from requested path.
+        // Strip known file extensions from the path
         foreach ($this->contentTypes as $extension) {
             $extension = '.' . $extension;
-            $extensionLength = strlen($extension);
-            if (substr($path, -$extensionLength) === $extension) {
+            if (substr($path, -strlen($extension)) === $extension) {
                 return str_replace($extension, '', $path);
             }
         }
@@ -258,36 +271,36 @@ class StorageCache extends AbstractCache
     }
 
     /**
-     * Determines file extension from headers content-type
+     * Determine file extension and MIME type from headers or request path.
      *
-     * @param Request $request
+     * @param Request       $request
      * @param Response|null $response
      * @return array
      */
     protected function determineFileExtension(Request $request, Response $response = null): array
     {
         $path = basename($request->path());
-        $headers = !empty($response) ? $response->headers : $request->headers;
-        if (empty($headers) || !$headers->has('content-type')) {
+        $headers = $response ? $response->headers : $request->headers;
+
+        if (!$headers || !$headers->has('content-type')) {
             return $this->defaultFileExtension;
         }
 
         $contentTypeBag = explode(';', $headers->get('content-type'));
         $headerContentType = array_shift($contentTypeBag);
 
-        // Compare header content type to quicksilver supported mimes.
+        // Match header content type with supported MIME types
         foreach ($this->contentTypes as $contentType => $extension) {
             if ($contentType === $headerContentType) {
                 return [$extension, $contentType];
             }
         }
 
-        // If headers doesn't have content type, search for file extension in requested path
+        // Fallback: detect extension from request path
         if (!empty($path)) {
             foreach ($this->contentTypes as $contentType => $extension) {
                 $extensionWithDot = '.' . $extension;
-                $extensionWithDotLength = strlen($extensionWithDot);
-                if (substr($path, -$extensionWithDotLength) === $extensionWithDot) {
+                if (substr($path, -strlen($extensionWithDot)) === $extensionWithDot) {
                     return [$extension, $contentType];
                 }
             }
