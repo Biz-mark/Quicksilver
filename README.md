@@ -42,9 +42,13 @@ Use the Quicksilver settings to define excluded paths so that pages containing s
 php artisan plugin:install BizMark.Quicksilver
 ```
 
+---
+
 ## Additional configuration
 
 Quicksilver can be configured so that the web server serves cached pages directly, completely bypassing application bootstrapping.
+
+---
 
 ### Apache
 
@@ -70,6 +74,8 @@ Quicksilver can be configured so that the web server serves cached pages directl
 
 3. **Ensure the plugin has read/write permissions for the `storage/quicksilver/cache` directory.**
 
+---
+
 ### Nginx
 
 ```nginx
@@ -94,6 +100,7 @@ location / {
 }
 ```
 
+---
 
 ### Ignoring the cached files
 
@@ -102,6 +109,8 @@ Do not forget to exclude the Quicksilver cache directory from version control by
 ```
 /storage/quicksilver
 ```
+
+---
 
 ## Clearing the cache
 
@@ -116,6 +125,8 @@ Clear the cache for a specific path:
 ```
 php artisan quicksilver:clear {path}
 ```
+
+---
 
 ## Events
 
@@ -182,6 +193,6 @@ Event::listen('bizmark.quicksilver.after_store', function(array $fileInformation
 });
 ```
 
-
 ---
+
 © 2026, Nick Khaetsky at [Biz-Mark](https://biz-mark.ru/) under the [GNU General Public License v2.0](https://choosealicense.com/licenses/gpl-2.0/).
