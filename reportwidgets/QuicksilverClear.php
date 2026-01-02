@@ -4,14 +4,17 @@ use Artisan, Flash, Input, Lang;
 use Backend\Classes\ReportWidgetBase;
 
 /**
- * Quicksilver cleaner reportwidget
+ * Quicksilver cache cleaner report widget.
+ *
+ * Provides UI actions for clearing Quicksilver cache entries.
+ *
  * @package BizMark\Quicksilver\ReportWidgets
  * @author Nick Khaetsky, Biz-Mark
  */
 class QuicksilverClear extends ReportWidgetBase
 {
     /**
-     * Render widget
+     * Render the report widget.
      *
      * @return mixed
      * @throws \SystemException
@@ -22,7 +25,7 @@ class QuicksilverClear extends ReportWidgetBase
     }
 
     /**
-     * Clear specific quicksilver path provided by user
+     * Clear a specific Quicksilver cache path provided by the user.
      *
      * @return void
      */
@@ -31,13 +34,14 @@ class QuicksilverClear extends ReportWidgetBase
         $specificPath = Input::get('path');
         Artisan::call('quicksilver:clear', ['path' => $specificPath]);
 
-        Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_specific', [
-            'path' => $specificPath
-        ]));
+        Flash::success(Lang::get(
+            'bizmark.quicksilver::lang.reportwidget.clear_specific',
+            ['path' => $specificPath]
+        ));
     }
 
     /**
-     * Clear all quicksilver cache
+     * Clear all Quicksilver cached pages.
      *
      * @return void
      */
@@ -45,11 +49,13 @@ class QuicksilverClear extends ReportWidgetBase
     {
         Artisan::call('quicksilver:clear');
 
-        Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_all_paths'));
+        Flash::success(
+            Lang::get('bizmark.quicksilver::lang.reportwidget.clear_all_paths')
+        );
     }
 
     /**
-     * Clear all quicksilver cache and system cache
+     * Clear both Quicksilver cache and the system cache.
      *
      * @return void
      */
@@ -58,6 +64,8 @@ class QuicksilverClear extends ReportWidgetBase
         Artisan::call('cache:clear');
         Artisan::call('quicksilver:clear');
 
-        Flash::success(Lang::get('bizmark.quicksilver::lang.reportwidget.clear_all'));
+        Flash::success(
+            Lang::get('bizmark.quicksilver::lang.reportwidget.clear_all')
+        );
     }
 }
