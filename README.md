@@ -48,8 +48,6 @@ php artisan plugin:install BizMark.Quicksilver
 
 Quicksilver can be configured so that the web server serves cached pages directly, completely bypassing application bootstrapping.
 
----
-
 ### Apache
 
 1. Open your `.htaccess` file and add the following rules before the `Standard routes` section:
@@ -73,8 +71,6 @@ Quicksilver can be configured so that the web server serves cached pages directl
     ```
 
 3. **Ensure the plugin has read/write permissions for the `storage/quicksilver/cache` directory.**
-
----
 
 ### Nginx
 
