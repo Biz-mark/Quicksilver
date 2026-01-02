@@ -9,26 +9,29 @@ use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
 /**
- * AbstractCache class
+ * AbstractCache class.
+ *
+ * Base class for cache validation logic.
+ *
  * @package BizMark\Quicksilver\Classes\Caches
  * @author Nick Khaetsky, Biz-Mark
  */
 abstract class AbstractCache implements Quicksilver
 {
     /**
-     * Event name called before request is validated
+     * Event name triggered before validating the request.
      */
     const EVENT_IS_REQUEST_VALID = 'bizmark.quicksilver.is_request_valid';
 
     /**
-     * Event name called before response is validated
+     * Event name triggered before validating the response.
      */
     const EVENT_IS_RESPONSE_VALID = 'bizmark.quicksilver.is_response_valid';
 
     /**
-     * Validate if a pair of request and response should be cached.
+     * Determines whether a request/response pair can be cached.
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
      * @return bool
      */
@@ -46,35 +49,38 @@ abstract class AbstractCache implements Quicksilver
     }
 
     /**
-     * Check that incoming request is valid to be cached.
+     * Checks whether the incoming request is eligible for caching.
      *
      * @param Request $request
      * @return bool
      */
     protected function isRequestValid(Request $request): bool
     {
-        // Check if request coming from administrator
+        // Reject requests coming from the backend or authenticated administrators
         if (App::runningInBackend() || BackendAuth::check()) {
             return false;
         }
 
-        // Check if request is for October CMS asset combiner
+        // Reject requests for October CMS asset combiner
         if (Str::startsWith($request->path(), 'combine')) {
             return false;
         }
 
-        // Check if request is coming from October frontend framework
-        if ($request->hasHeader('X-OCTOBER-REQUEST-HANDLER') ||
-            $request->hasHeader('X-OCTOBER-REQUEST-PARTIAL')) {
+        // Reject requests originating from the October CMS frontend framework (AJAX/partials)
+        if (
+            $request->hasHeader('X-OCTOBER-REQUEST-HANDLER') ||
+            $request->hasHeader('X-OCTOBER-REQUEST-PARTIAL')
+        ) {
             return false;
         }
 
-        // Check if we had to cache request with query strings
+        // Reject requests with query strings if query caching is disabled
         $isQueryShouldCache = Settings::get('cache_query_strings', false);
         if (!empty($request->getQueryString()) && !$isQueryShouldCache) {
             return false;
         }
 
+        // Reject requests matching excluded paths
         $excludedPaths = Settings::get('exclude_paths', []);
         if (!empty($excludedPaths)) {
             foreach ($excludedPaths as $path) {
@@ -84,7 +90,7 @@ abstract class AbstractCache implements Quicksilver
             }
         }
 
-        // Support custom validation
+        // Allow custom request validation via event listeners
         if (Event::fire(self::EVENT_IS_REQUEST_VALID, [$request]) === false) {
             return false;
         }
@@ -93,19 +99,19 @@ abstract class AbstractCache implements Quicksilver
     }
 
     /**
-     * Check that prepared request is valid to be cached.
+     * Checks whether the response is eligible for caching.
      *
      * @param Response $response
      * @return bool
      */
     protected function isResponseValid(Response $response): bool
     {
-        // Check that response is succeeded
+        // Only cache successful responses
         if ($response->getStatusCode() !== 200) {
             return false;
         }
 
-        // Support custom validation
+        // Allow custom response validation via event listeners
         if (Event::fire(self::EVENT_IS_RESPONSE_VALID, [$response]) === false) {
             return false;
         }
