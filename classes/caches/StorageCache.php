@@ -5,7 +5,7 @@ use Storage, Config, Event;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use October\Rain\Support\Date;
+use Carbon\Carbon as Date;
 use BizMark\Quicksilver\Models\Settings;
 use BizMark\Quicksilver\Classes\Contracts\Quicksilver;
 
