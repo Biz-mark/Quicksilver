@@ -20,3 +20,4 @@ v3.2.1: Small styling changes.
 v3.2.2: Fixed wrong settings code for caching query strings
 v3.3.0: Compatibility with OCMS v4
 v3.3.1: Minor
+v3.3.2: Fix OCMS v3 compatibility
